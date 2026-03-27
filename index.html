@@ -1,462 +1,1069 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>TerraRose Farm Manager</title>
 
 <style>
+:root{
+  --rose:#8b1e3f;
+  --rose-light:#ead7de;
+  --rose-soft:#f7eef2;
+  --green:#2e8b57;
+  --blue:#2a6de0;
+  --gold:#b8860b;
+  --red:#b30000;
+  --red-bg:#ffe6e6;
+  --green-bg:#e8f8ee;
+  --yellow-bg:#fff7d6;
+  --text:#2d2d2d;
+  --muted:#6f6f6f;
+  --card:#ffffff;
+  --bg:#f6f0f3;
+  --line:#eee;
+}
+
+*{
+  box-sizing:border-box;
+}
 
 body{
-font-family:Arial;
-background:#f6f7f8;
-margin:0;
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
 }
 
 header{
-background:#8b1e3f;
-color:white;
-padding:18px;
-text-align:center;
-font-size:22px;
-font-weight:bold;
+  background:linear-gradient(135deg,var(--rose),#b84b70);
+  color:white;
+  padding:18px 16px;
+  text-align:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+}
+
+header h1{
+  margin:0;
+  font-size:1.45rem;
+}
+
+header p{
+  margin:6px 0 0;
+  font-size:.92rem;
+  opacity:.95;
 }
 
 .container{
-padding:16px;
+  max-width:1100px;
+  margin:auto;
+  padding:16px;
 }
 
 .tabs{
-display:flex;
-flex-wrap:wrap;
-gap:8px;
-margin-bottom:16px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:16px;
 }
 
 .tab{
-background:#ead7de;
-border:none;
-padding:10px 14px;
-border-radius:18px;
-font-weight:bold;
-color:#8b1e3f;
+  border:none;
+  background:var(--rose-light);
+  color:var(--rose);
+  padding:10px 14px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:.95rem;
 }
 
 .tab.active{
-background:#8b1e3f;
-color:white;
-}
-
-.card{
-background:white;
-padding:16px;
-border-radius:12px;
-margin-bottom:16px;
-box-shadow:0 3px 8px rgba(0,0,0,.08);
-}
-
-input,select{
-width:100%;
-padding:10px;
-margin-top:6px;
-margin-bottom:10px;
-border-radius:8px;
-border:1px solid #ddd;
-}
-
-button{
-background:#8b1e3f;
-color:white;
-border:none;
-padding:10px 14px;
-border-radius:8px;
-font-weight:bold;
+  background:var(--rose);
+  color:white;
 }
 
 .view{
-display:none;
+  display:none;
 }
 
 .view.active{
-display:block;
+  display:block;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  gap:14px;
+}
+
+.span-12{grid-column:span 12;}
+.span-8{grid-column:span 8;}
+.span-6{grid-column:span 6;}
+.span-4{grid-column:span 4;}
+.span-3{grid-column:span 3;}
+
+@media (max-width:850px){
+  .span-8,.span-6,.span-4,.span-3{grid-column:span 12;}
+}
+
+.card{
+  background:var(--card);
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 4px 12px rgba(0,0,0,.07);
+  border:1px solid #f0e5ea;
+  margin-bottom:16px;
+}
+
+h2,h3{
+  margin-top:0;
+  margin-bottom:10px;
+}
+
+.subtle{
+  color:var(--muted);
+  font-size:.92rem;
+}
+
+.kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:16px;
+}
+
+@media (max-width:850px){
+  .kpi-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+.kpi{
+  background:white;
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 4px 10px rgba(0,0,0,.07);
+}
+
+.kpi .label{
+  font-size:.88rem;
+  color:var(--muted);
+  margin-bottom:8px;
+}
+
+.kpi .value{
+  font-size:1.7rem;
+  font-weight:800;
+}
+
+.sales-color{color:var(--green);}
+.expense-color{color:var(--rose);}
+.labor-color{color:var(--gold);}
+.profit-color{color:var(--blue);}
+
+label{
+  display:block;
+  font-weight:700;
+  margin-top:12px;
+  margin-bottom:6px;
+}
+
+input,select,textarea{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  font-size:16px;
+  background:white;
+}
+
+textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+button.primary{
+  background:var(--rose);
+  color:white;
+  border:none;
+  padding:12px 16px;
+  border-radius:12px;
+  font-weight:700;
+  margin-top:12px;
+}
+
+button.secondary{
+  background:var(--rose-light);
+  color:var(--rose);
+  border:none;
+  padding:12px 16px;
+  border-radius:12px;
+  font-weight:700;
+  margin-top:12px;
 }
 
 .alert{
-background:#ffe6e6;
-padding:10px;
-border-radius:6px;
-color:#b30000;
-margin-top:10px;
+  padding:12px;
+  border-radius:12px;
+  margin-top:10px;
+  font-size:.95rem;
 }
 
-.good{
-background:#e6ffe6;
-padding:10px;
-border-radius:6px;
-color:#1e7e34;
-margin-top:10px;
+.alert.red{
+  background:var(--red-bg);
+  color:var(--red);
 }
 
+.alert.green{
+  background:var(--green-bg);
+  color:#1e7e34;
+}
+
+.alert.yellow{
+  background:var(--yellow-bg);
+  color:#8a6b00;
+}
+
+.pill{
+  display:inline-block;
+  background:var(--rose-soft);
+  color:var(--rose);
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:.82rem;
+  font-weight:700;
+  margin:0 6px 6px 0;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+}
+
+th,td{
+  text-align:left;
+  padding:10px 8px;
+  border-bottom:1px solid var(--line);
+  font-size:.94rem;
+  vertical-align:top;
+}
+
+th{
+  font-size:.82rem;
+  text-transform:uppercase;
+  letter-spacing:.03em;
+  color:var(--muted);
+}
+
+.big-next{
+  font-size:1.35rem;
+  font-weight:800;
+  color:var(--rose);
+  margin:6px 0 12px;
+}
+
+.small-note{
+  font-size:.85rem;
+  color:var(--muted);
+}
+
+.footer-space{
+  height:30px;
+}
 </style>
 </head>
-
 <body>
 
-<header>🌹 TerraRose Farm Manager</header>
+<header>
+  <h1>🌹 TerraRose Farm Manager</h1>
+  <p>Rose farm planning, spray rotation, irrigation, records, and reports</p>
+</header>
 
 <div class="container">
 
-<div class="tabs">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('dashboard',this)">Dashboard</button>
+    <button class="tab" onclick="showTab('sales',this)">Sales</button>
+    <button class="tab" onclick="showTab('expenses',this)">Expenses</button>
+    <button class="tab" onclick="showTab('labor',this)">Labor</button>
+    <button class="tab" onclick="showTab('irrigation',this)">Irrigation</button>
+    <button class="tab" onclick="showTab('sprays',this)">Spray Program</button>
+    <button class="tab" onclick="showTab('tax',this)">Tax Reports</button>
+  </div>
 
-<button class="tab active" onclick="showTab('dashboard',this)">Dashboard</button>
-<button class="tab" onclick="showTab('sales',this)">Sales</button>
-<button class="tab" onclick="showTab('expenses',this)">Expenses</button>
-<button class="tab" onclick="showTab('labor',this)">Labor</button>
-<button class="tab" onclick="showTab('irrigation',this)">Irrigation</button>
-<button class="tab" onclick="showTab('spray',this)">Spray Program</button>
-<button class="tab" onclick="showTab('tax',this)">Tax Reports</button>
+  <div id="dashboard" class="view active">
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="label">Total Sales</div>
+        <div class="value sales-color" id="kpiSales">$0.00</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Expenses</div>
+        <div class="value expense-color" id="kpiExpenses">$0.00</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Labor</div>
+        <div class="value labor-color" id="kpiLabor">$0.00</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Net Profit</div>
+        <div class="value profit-color" id="kpiProfit">$0.00</div>
+      </div>
+    </div>
 
-</div>
+    <div class="grid">
+      <div class="span-6 card">
+        <h3>Next Recommended Spray</h3>
+        <div id="nextSprayBox"></div>
+      </div>
 
-<div id="dashboard" class="view active">
+      <div class="span-6 card">
+        <h3>Resistance & Soil Alerts</h3>
+        <div id="resistanceAlerts"></div>
+      </div>
 
-<div class="card">
-<h2>Farm Dashboard</h2>
+      <div class="span-12 card">
+        <h3>Quick Farm Summary</h3>
+        <div id="quickSummary"></div>
+      </div>
+    </div>
+  </div>
 
-<div id="sprayAlert"></div>
+  <div id="sales" class="view">
+    <div class="grid">
+      <div class="span-6 card">
+        <h3>Record Flower Sale</h3>
 
-</div>
+        <label>Date</label>
+        <input type="date" id="saleDate">
 
-</div>
+        <label>Customer / Florist</label>
+        <input id="saleCustomer">
 
-<div id="sales" class="view">
+        <label>Variety</label>
+        <input id="saleVariety">
 
-<div class="card">
-<h2>Sales</h2>
+        <label>Stems Sold</label>
+        <input type="number" id="saleStems">
 
-<label>Date</label>
-<input type="date" id="saleDate">
+        <label>Price Per Stem</label>
+        <input type="number" step="0.01" id="salePrice">
 
-<label>Customer</label>
-<input id="saleCustomer">
+        <button class="primary" onclick="saveSale()">Save Sale</button>
+      </div>
 
-<label>Variety</label>
-<input id="saleVariety">
+      <div class="span-6 card">
+        <h3>Recent Sales</h3>
+        <div id="salesTable"></div>
+      </div>
+    </div>
+  </div>
 
-<label>Stems</label>
-<input type="number" id="saleStems">
+  <div id="expenses" class="view">
+    <div class="grid">
+      <div class="span-6 card">
+        <h3>Add Expense</h3>
 
-<label>Price Per Stem</label>
-<input type="number" id="salePrice">
+        <label>Date</label>
+        <input type="date" id="expenseDate">
 
-<button onclick="saveSale()">Save Sale</button>
+        <label>Vendor</label>
+        <input id="expenseVendor">
 
-</div>
+        <label>Category</label>
+        <select id="expenseCategory">
+          <option>Supplies</option>
+          <option>Pesticides</option>
+          <option>Fertilizer</option>
+          <option>Equipment</option>
+          <option>Fuel</option>
+          <option>Repairs</option>
+          <option>Irrigation</option>
+          <option>Packaging</option>
+          <option>Other</option>
+        </select>
 
-</div>
+        <label>Amount</label>
+        <input type="number" step="0.01" id="expenseAmount">
 
-<div id="expenses" class="view">
+        <button class="primary" onclick="saveExpense()">Save Expense</button>
+      </div>
 
-<div class="card">
-<h2>Expenses</h2>
+      <div class="span-6 card">
+        <h3>Recent Expenses</h3>
+        <div id="expensesTable"></div>
+      </div>
+    </div>
+  </div>
 
-<label>Date</label>
-<input type="date">
+  <div id="labor" class="view">
+    <div class="grid">
+      <div class="span-6 card">
+        <h3>Log Labor</h3>
 
-<label>Vendor</label>
-<input>
+        <label>Date</label>
+        <input type="date" id="laborDate">
 
-<label>Category</label>
-<select>
-<option>Supplies</option>
-<option>Pesticides</option>
-<option>Fertilizer</option>
-<option>Equipment</option>
-<option>Fuel</option>
-</select>
+        <label>Worker</label>
+        <input id="laborWorker">
 
-<label>Amount</label>
-<input type="number">
+        <label>Hours</label>
+        <input type="number" step="0.25" id="laborHours">
 
-<button>Save Expense</button>
+        <label>Hourly Rate</label>
+        <input type="number" step="0.01" id="laborRate">
 
-</div>
+        <button class="primary" onclick="saveLabor()">Save Labor</button>
+      </div>
 
-</div>
+      <div class="span-6 card">
+        <h3>Recent Labor</h3>
+        <div id="laborTable"></div>
+      </div>
+    </div>
+  </  <div id="irrigation" class="view">
+    <div class="grid">
+      <div class="span-6 card">
+        <h3>Drip Water Calculator</h3>
 
-<div id="labor" class="view">
+        <label>Minutes Drip Ran</label>
+        <input type="number" id="irMinutes">
 
-<div class="card">
-<h2>Labor</h2>
+        <label>Emitters Per Plant</label>
+        <input type="number" id="irEmitters" value="2">
 
-<label>Date</label>
-<input type="date">
+        <label>GPH Per Emitter</label>
+        <input type="number" step="0.01" id="irGph" value="0.5">
 
-<label>Worker</label>
-<input>
+        <button class="primary" onclick="calculateWater()">Calculate Water</button>
+        <button class="secondary" onclick="saveIrrigationDefaults()">Save Defaults</button>
 
-<label>Hours</label>
-<input type="number">
+        <div id="waterCalcResult"></div>
+      </div>
 
-<label>Rate</label>
-<input type="number">
+      <div class="span-6 card">
+        <h3>Log Irrigation Run</h3>
 
-<button>Save Labor</button>
+        <label>Date</label>
+        <input type="date" id="irrigationDate">
 
-</div>
+        <label>Block / Section</label>
+        <input id="irrigationBlock">
 
-</div><div id="irrigation" class="view">
+        <label>Minutes Drip Ran</label>
+        <input type="number" id="irrigationMinutes">
 
-<div class="card">
-<h2>Irrigation</h2>
+        <button class="primary" onclick="saveIrrigation()">Save Irrigation</button>
 
-<label>Minutes Drip Ran</label>
-<input type="number" id="irrigationMinutes">
+        <div id="irrigationTable"></div>
+      </div>
+    </div>
+  </div>
 
-<label>Emitters Per Plant</label>
-<input type="number" id="emittersPerPlant" value="2">
+  <div id="sprays" class="view">
+    <div class="grid">
+      <div class="span-6 card">
+        <h3>Log Spray Application</h3>
+        <div class="subtle">You can follow the recommended schedule or override it anytime.</div>
 
-<label>GPH Per Emitter</label>
-<input type="number" id="gphPerEmitter" value="0.5">
+        <label>Date</label>
+        <input type="date" id="sprayDate">
 
-<button onclick="calculateWater()">Calculate Water</button>
+        <label>Product Used</label>
+        <input id="sprayProduct">
 
-<div id="waterResult"></div>
+        <label>Active Ingredient</label>
+        <input id="sprayAI">
 
-</div>
+        <label>Rotation Group</label>
+        <select id="sprayGroup">
+          <option value="1">Group 1</option>
+          <option value="2">Group 2</option>
+          <option value="3">Group 3</option>
+          <option value="4">Group 4</option>
+        </select>
 
-</div>
+        <label>Preventive or Curative</label>
+        <select id="sprayType">
+          <option>Preventive</option>
+          <option>Curative</option>
+        </select>
 
-<div id="spray" class="view">
+        <label>Organic or Inorganic</label>
+        <select id="sprayOrganic">
+          <option>Organic</option>
+          <option>Inorganic</option>
+        </select>
 
-<div class="card">
-<h2>Spray Program</h2>
+        <label>Bud Stage</label>
+        <select id="sprayBudStage">
+          <option>Vegetative growth</option>
+          <option>Tight bud</option>
+          <option>Marshmallow stage</option>
+          <option>Harvest stage</option>
+          <option>Full bloom</option>
+        </select>
 
-<label>Date</label>
-<input type="date" id="sprayDate">
+        <label>Mixing Instructions</label>
+        <input id="sprayMix" placeholder="Example: 1–2 oz per 5 gallons">
 
-<label>Product Used</label>
-<input type="text" id="product">
+        <label>Repeat Interval (days)</label>
+        <input type="number" id="sprayInterval" value="7">
 
-<label>Active Ingredient</label>
-<input type="text" id="activeIngredient">
+        <label>Notes</label>
+        <textarea id="sprayNotes"></textarea>
 
-<label>Rotation Group</label>
-<input type="number" id="group" min="1" max="4">
+        <button class="primary" onclick="saveSpray()">Save Spray</button>
+      </div>
 
-<label>Preventive or Curative</label>
-<select id="sprayType">
-<option>Preventive</option>
-<option>Curative</option>
-</select>
+      <div class="span-6 card">
+        <h3>Recommended Rotation Schedule</h3>
+        <div class="pill">Group 1: Safari + Propiconazole</div>
+        <div class="pill">Group 2: Spinosad + Neem Oil</div>
+        <div class="pill">Group 3: Acephate + Mancozeb</div>
+        <div class="pill">Group 4: Azadirachtin + Bacillus subtilis</div>
 
-<label>Organic or Inorganic</label>
-<select id="organicType">
-<option>Organic</option>
-<option>Inorganic</option>
-</select>
+        <div id="sprayStatusBox"></div>
+      </div>
 
-<label>Mixing Instructions</label>
-<input type="text" id="mixInstructions" placeholder="Example: 1–2 oz per 5 gallons">
+      <div class="span-12 card">
+        <h3>Recent Spray Log</h3>
+        <div id="spraysTable"></div>
+      </div>
+    </div>
+  </div>
 
-<label>Repeat Interval (days)</label>
-<input type="number" id="interval" value="7">
+  <div id="tax" class="view">
+    <div class="grid">
+      <div class="span-12 card">
+        <h3>Yearly Farm Profit Summary</h3>
+        <div id="taxYearlyTable"></div>
+      </div>
 
-<button onclick="logSpray()">Save Spray</button>
+      <div class="span-6 card">
+        <h3>Expense Categories</h3>
+        <div id="expenseCategoryTable"></div>
+      </div>
 
-</div>
+      <div class="span-6 card">
+        <h3>Export</h3>
+        <div class="small-note">Export one CSV for your accountant or spreadsheet.</div>
+        <button class="primary" onclick="exportCSV()">Export Transactions CSV</button>
+      </div>
+    </div>
+  </div>
 
-<div class="card">
-<h2>Spray Dashboard</h2>
-<div id="dashboardSpray"></div>
-</div>
-
-</div>
-
-<div id="tax" class="view">
-
-<div class="card">
-<h2>Tax Reports</h2>
-<p>Farm tax summaries and exports can go here.</p>
-</div>
-
-</div>
-
+  <div class="footer-space"></div>
 </div>
 
 <script>
+let db = JSON.parse(localStorage.getItem("terraroseFarmManagerV17") || "{}");
 
-let sprayLog = JSON.parse(localStorage.getItem("sprayLog") || "[]")
-let salesLog = JSON.parse(localStorage.getItem("salesLog") || "[]")
+db.sales ||= [];
+db.expenses ||= [];
+db.labor ||= [];
+db.irrigation ||= [];
+db.sprays ||= [];
+db.settings ||= {
+  dripGPH: 0.5,
+  emittersPerPlant: 2
+};
 
-function showTab(id,btn){
+const rotationMap = {
+  1: {
+    next: 2,
+    label: "Group 1",
+    products: "Safari + Propiconazole"
+  },
+  2: {
+    next: 3,
+    label: "Group 2",
+    products: "Spinosad + Neem Oil"
+  },
+  3: {
+    next: 4,
+    label: "Group 3",
+    products: "Acephate + Mancozeb"
+  },
+  4: {
+    next: 1,
+    label: "Group 4",
+    products: "Azadirachtin + Bacillus subtilis"
+  }
+};
 
-document.querySelectorAll(".view").forEach(v=>{
-v.classList.remove("active")
-})
+function saveDB(){
+  localStorage.setItem("terraroseFarmManagerV17", JSON.stringify(db));
+  renderAll();
+}
 
-document.querySelectorAll(".tab").forEach(t=>{
-t.classList.remove("active")
-})
+function showTab(id, btn){
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  btn.classList.add("active");
+}
 
-document.getElementById(id).classList.add("active")
-btn.classList.add("active")
+function todayStr(){
+  return new Date().toISOString().slice(0,10);
+}
 
+function addDays(dateStr, days){
+  const d = new Date(dateStr + "T12:00:00");
+  d.setDate(d.getDate() + Number(days));
+  return d.toISOString().slice(0,10);
+}
+
+function daysUntil(dateStr){
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const d = new Date(dateStr + "T00:00:00");
+  return Math.round((d - today) / 86400000);
+}
+
+function fmtMoney(n){
+  return "$" + Number(n || 0).toFixed(2);
+}
+
+function setDefaultDates(){
+  const fields = [
+    "saleDate","expenseDate","laborDate",
+    "irrigationDate","sprayDate"
+  ];
+  fields.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el && !el.value) el.value = todayStr();
+  });
 }
 
 function saveSale(){
+  const date = document.getElementById("saleDate").value;
+  const customer = document.getElementById("saleCustomer").value;
+  const variety = document.getElementById("saleVariety").value;
+  const stems = Number(document.getElementById("saleStems").value || 0);
+  const price = Number(document.getElementById("salePrice").value || 0);
 
-let date = document.getElementById("saleDate").value
-let customer = document.getElementById("saleCustomer").value
-let variety = document.getElementById("saleVariety").value
-let stems = Number(document.getElementById("saleStems").value || 0)
-let price = Number(document.getElementById("salePrice").value || 0)
+  db.sales.unshift({
+    date, customer, variety, stems, price,
+    total: stems * price
+  });
 
-salesLog.push({
-date:date,
-customer:customer,
-variety:variety,
-stems:stems,
-price:price,
-total:stems*price
-})
+  saveDB();
+}
 
-localStorage.setItem("salesLog",JSON.stringify(salesLog))
-alert("Sale saved")
+function saveExpense(){
+  const date = document.getElementById("expenseDate").value;
+  const vendor = document.getElementById("expenseVendor").value;
+  const category = document.getElementById("expenseCategory").value;
+  const amount = Number(document.getElementById("expenseAmount").value || 0);
 
+  db.expenses.unshift({ date, vendor, category, amount });
+  saveDB();
+}
+
+function saveLabor(){
+  const date = document.getElementById("laborDate").value;
+  const worker = document.getElementById("laborWorker").value;
+  const hours = Number(document.getElementById("laborHours").value || 0);
+  const rate = Number(document.getElementById("laborRate").value || 0);
+
+  db.labor.unshift({
+    date, worker, hours, rate,
+    pay: hours * rate
+  });
+
+  saveDB();
+}
+
+function calcWater(minutes, gph, emitters){
+  return (Number(minutes) / 60) * Number(gph) * Number(emitters);
 }
 
 function calculateWater(){
+  const minutes = Number(document.getElementById("irMinutes").value || 0);
+  const emitters = Number(document.getElementById("irEmitters").value || 0);
+  const gph = Number(document.getElementById("irGph").value || 0);
 
-let minutes = Number(document.getElementById("irrigationMinutes").value || 0)
-let emitters = Number(document.getElementById("emittersPerPlant").value || 0)
-let gph = Number(document.getElementById("gphPerEmitter").value || 0)
+  const gallons = calcWater(minutes, gph, emitters);
 
-let gallons = (minutes/60) * emitters * gph
-
-document.getElementById("waterResult").innerHTML =
-"<div class='good'>Each plant received approximately <strong>"+gallons.toFixed(2)+" gallons</strong> of water.</div>"
-
+  document.getElementById("waterCalcResult").innerHTML =
+    `<div class="alert green">Each plant received approximately <strong>${gallons.toFixed(2)} gallons</strong> of water.</div>`;
 }
 
-function logSpray(){
-
-let date = document.getElementById("sprayDate").value
-let group = parseInt(document.getElementById("group").value)
-let product = document.getElementById("product").value
-let activeIngredient = document.getElementById("activeIngredient").value
-let sprayType = document.getElementById("sprayType").value
-let organicType = document.getElementById("organicType").value
-let mixInstructions = document.getElementById("mixInstructions").value
-let interval = parseInt(document.getElementById("interval").value || 7)
-
-sprayLog.push({
-date:date,
-group:group,
-product:product,
-activeIngredient:activeIngredient,
-sprayType:sprayType,
-organicType:organicType,
-mixInstructions:mixInstructions,
-interval:interval
-})
-
-localStorage.setItem("sprayLog",JSON.stringify(sprayLog))
-
-updateDashboard()
-
-alert("Spray saved")
-
+function saveIrrigationDefaults(){
+  db.settings.dripGPH = Number(document.getElementById("irGph").value || 0.5);
+  db.settings.emittersPerPlant = Number(document.getElementById("irEmitters").value || 2);
+  saveDB();
 }
 
-function addDays(date,days){
+function saveIrrigation(){
+  const date = document.getElementById("irrigationDate").value;
+  const block = document.getElementById("irrigationBlock").value;
+  const minutes = Number(document.getElementById("irrigationMinutes").value || 0);
+  const gallonsPerPlant = calcWater(minutes, db.settings.dripGPH, db.settings.emittersPerPlant);
 
-let result = new Date(date)
-result.setDate(result.getDate()+days)
-return result
+  db.irrigation.unshift({
+    date, block, minutes, gallonsPerPlant
+  });
 
+  saveDB();
 }
 
-function updateDashboard(){
+function saveSpray(){
+  const date = document.getElementById("sprayDate").value;
+  const product = document.getElementById("sprayProduct").value;
+  const activeIngredient = document.getElementById("sprayAI").value;
+  const group = Number(document.getElementById("sprayGroup").value || 1);
+  const sprayType = document.getElementById("sprayType").value;
+  const organic = document.getElementById("sprayOrganic").value;
+  const budStage = document.getElementById("sprayBudStage").value;
+  const mix = document.getElementById("sprayMix").value;
+  const interval = Number(document.getElementById("sprayInterval").value || 7);
+  const notes = document.getElementById("sprayNotes").value;
 
-if(sprayLog.length===0){
-document.getElementById("dashboardSpray").innerHTML="No sprays logged yet."
-document.getElementById("sprayAlert").innerHTML="No spray alerts yet."
-return
+  db.sprays.unshift({
+    date, product, activeIngredient, group,
+    sprayType, organic, budStage, mix, interval, notes
+  });
+
+  saveDB();
 }
 
-let last = sprayLog[sprayLog.length-1]
-let lastDate = new Date(last.date)
-let nextDate = addDays(lastDate,last.interval || 7)
-
-let nextGroup = last.group + 1
-if(nextGroup>4){
-nextGroup = 1
+function getSortedSprays(){
+  return [...db.sprays].sort((a,b)=> b.date.localeCompare(a.date));
 }
 
-let today = new Date()
+function getSprayInsights(){
+  const sprays = getSortedSprays();
+  if(!sprays.length) return null;
 
-let warning = ""
+  const last = sprays[0];
+  const nextDate = addDays(last.date, last.interval || 7);
+  const dueIn = daysUntil(nextDate);
+  const rotation = rotationMap[last.group] || null;
 
-if(sprayLog.length>1){
+  let sameGroupWarning = "";
+  if(sprays[1] && Number(sprays[1].group) === Number(last.group)){
+    sameGroupWarning = "Same rotation group was used twice in a row.";
+  }
 
-let prev = sprayLog[sprayLog.length-2]
+  let sameAIWarning = "";
+  if(sprays.length >= 2){
+    const ai1 = (sprays[0].activeIngredient || "").trim().toLowerCase();
+    const ai2 = (sprays[1].activeIngredient || "").trim().toLowerCase();
+    if(ai1 && ai2 && ai1 === ai2){
+      sameAIWarning = `You have used ${sprays[0].activeIngredient} two times in a row.`;
+    }
+  }
 
-if(prev.group===last.group){
-warning = "<div class='alert'>⚠ Resistance warning: same spray group repeated.</div>"
+  const soilTreatmentDate = addDays(last.date, 28);
+  const soilDue = daysUntil(soilTreatmentDate) <= 0;
+
+  return {
+    last,
+    nextDate,
+    dueIn,
+    rotation,
+    sameGroupWarning,
+    sameAIWarning,
+    soilTreatmentDate,
+    soilDue
+  };
 }
 
+function renderDashboard(){
+  const totalSales = db.sales.reduce((s,x)=>s+Number(x.total||0),0);
+  const totalExpenses = db.expenses.reduce((s,x)=>s+Number(x.amount||0),0);
+  const totalLabor = db.labor.reduce((s,x)=>s+Number(x.pay||0),0);
+  const profit = totalSales - totalExpenses - totalLabor;
+
+  document.getElementById("kpiSales").textContent = fmtMoney(totalSales);
+  document.getElementById("kpiExpenses").textContent = fmtMoney(totalExpenses);
+  document.getElementById("kpiLabor").textContent = fmtMoney(totalLabor);
+  document.getElementById("kpiProfit").textContent = fmtMoney(profit);
+
+  const insights = getSprayInsights();
+
+  if(!insights){
+    document.getElementById("nextSprayBox").innerHTML = `
+      <div class="subtle">No sprays logged yet.</div>
+      <div class="small-note">Once you save your first spray, the app will calculate the next recommended treatment and warnings.</div>
+    `;
+    document.getElementById("resistanceAlerts").innerHTML = `<div class="subtle">No spray alerts yet.</div>`;
+  } else {
+    let dueBox = "";
+    if(insights.dueIn <= 0){
+      dueBox = `<div class="alert red"><strong>Spray is due now or overdue.</strong></div>`;
+    } else if(insights.dueIn <= 3){
+      dueBox = `<div class="alert yellow"><strong>Next spray due in ${insights.dueIn} day(s).</strong></div>`;
+    } else {
+      dueBox = `<div class="alert green"><strong>Next spray due:</strong> ${insights.nextDate}</div>`;
+    }
+
+    document.getElementById("nextSprayBox").innerHTML = `
+      ${dueBox}
+      <div class="big-next">${insights.rotation ? insights.rotation.label : "No rotation"}</div>
+      <div><strong>Suggested products:</strong> ${insights.rotation ? insights.rotation.products : "—"}</div>
+      <div class="small-note" style="margin-top:10px;">
+        Last spray: ${insights.last.product} • ${insights.last.activeIngredient} • ${insights.last.date}
+      </div>
+    `;
+
+    let alerts = "";
+    if(insights.sameGroupWarning){
+      alerts += `<div class="alert red">⚠ ${insights.sameGroupWarning}</div>`;
+    }
+    if(insights.sameAIWarning){
+      alerts += `<div class="alert red">⚠ ${insights.sameAIWarning} Consider rotating to a different active ingredient next.</div>`;
+    }
+    if(insights.soilDue){
+      alerts += `<div class="alert yellow">🌱 Soil treatment due now. Consider beneficial nematodes or azadirachtin drench.</div>`;
+    } else {
+      alerts += `<div class="alert green">Next soil treatment target: ${insights.soilTreatmentDate}</div>`;
+    }
+    document.getElementById("resistanceAlerts").innerHTML = alerts;
+  }
+
+  document.getElementById("quickSummary").innerHTML = `
+    <span class="pill">Sales records: ${db.sales.length}</span>
+    <span class="pill">Expense records: ${db.expenses.length}</span>
+    <span class="pill">Labor entries: ${db.labor.length}</span>
+    <span class="pill">Irrigation runs: ${db.irrigation.length}</span>
+    <span class="pill">Sprays logged: ${db.sprays.length}</span>
+  `;
 }
 
-let soilReminder = ""
-let soilDate = addDays(lastDate,28)
-
-if(today > soilDate){
-soilReminder = "<div class='alert'>🌱 Soil treatment due (beneficial nematodes or azadirachtin drench).</div>"
+function renderSales(){
+  document.getElementById("salesTable").innerHTML = `
+    <table>
+      <tr><th>Date</th><th>Customer</th><th>Variety</th><th>Stems</th><th>Total</th></tr>
+      ${
+        db.sales.length
+          ? db.sales.slice(0,15).map(s=>`
+            <tr>
+              <td>${s.date || ""}</td>
+              <td>${s.customer || ""}</td>
+              <td>${s.variety || ""}</td>
+              <td>${s.stems || 0}</td>
+              <td>${fmtMoney(s.total)}</td>
+            </tr>
+          `).join("")
+          : `<tr><td colspan="5">No sales yet.</td></tr>`
+      }
+    </table>
+  `;
 }
 
-let dueText = ""
-let diff = Math.ceil((nextDate - today)/(1000*60*60*24))
-
-if(diff <= 0){
-dueText = "<div class='alert'>⏰ Spray is due now or overdue.</div>"
-} else if(diff <= 3){
-dueText = "<div class='alert'>⏰ Next spray due in " + diff + " day(s).</div>"
-} else {
-dueText = "<div class='good'>Next spray due: " + nextDate.toDateString() + "</div>"
+function renderExpenses(){
+  document.getElementById("expensesTable").innerHTML = `
+    <table>
+      <tr><th>Date</th><th>Vendor</th><th>Category</th><th>Amount</th></tr>
+      ${
+        db.expenses.length
+          ? db.expenses.slice(0,15).map(e=>`
+            <tr>
+              <td>${e.date || ""}</td>
+              <td>${e.vendor || ""}</td>
+              <td>${e.category || ""}</td>
+              <td>${fmtMoney(e.amount)}</td>
+            </tr>
+          `).join("")
+          : `<tr><td colspan="4">No expenses yet.</td></tr>`
+      }
+    </table>
+  `;
 }
 
-document.getElementById("dashboardSpray").innerHTML =
-
-dueText +
-
-"<div class='good'>Last Spray: "+last.date+"</div>"+
-
-"<div><strong>Product:</strong> "+last.product+"</div>"+
-
-"<div><strong>Active Ingredient:</strong> "+last.activeIngredient+"</div>"+
-
-"<div><strong>Group Used:</strong> "+last.group+"</div>"+
-
-"<div><strong>Type:</strong> "+last.sprayType+" / "+last.organicType+"</div>"+
-
-"<div><strong>Mix:</strong> "+last.mixInstructions+"</div>"+
-
-"<div><strong>Recommended Rotation Group:</strong> "+nextGroup+"</div>"+
-
-warning +
-
-soilReminder
-
-document.getElementById("sprayAlert").innerHTML =
-dueText +
-"<div><strong>Recommended next rotation group:</strong> "+nextGroup+"</div>"
-
+function renderLabor(){
+  document.getElementById("laborTable").innerHTML = `
+    <table>
+      <tr><th>Date</th><th>Worker</th><th>Hours</th><th>Rate</th><th>Pay</th></tr>
+      ${
+        db.labor.length
+          ? db.labor.slice(0,15).map(l=>`
+            <tr>
+              <td>${l.date || ""}</td>
+              <td>${l.worker || ""}</td>
+              <td>${l.hours || 0}</td>
+              <td>${fmtMoney(l.rate)}</td>
+              <td>${fmtMoney(l.pay)}</td>
+            </tr>
+          `).join("")
+          : `<tr><td colspan="5">No labor yet.</td></tr>`
+      }
+    </table>
+  `;
 }
 
-updateDashboard()
+function renderIrrigation(){
+  document.getElementById("irGph").value = db.settings.dripGPH;
+  document.getElementById("irEmitters").value = db.settings.emittersPerPlant;
 
+  document.getElementById("irrigationTable").innerHTML = `
+    <table>
+      <tr><th>Date</th><th>Block</th><th>Minutes</th><th>Gal / Plant</th></tr>
+      ${
+        db.irrigation.length
+          ? db.irrigation.slice(0,15).map(i=>`
+            <tr>
+              <td>${i.date || ""}</td>
+              <td>${i.block || ""}</td>
+              <td>${i.minutes || 0}</td>
+              <td>${Number(i.gallonsPerPlant || 0).toFixed(2)}</td>
+            </tr>
+          `).join("")
+          : `<tr><td colspan="4">No irrigation records yet.</td></tr>`
+      }
+    </table>
+  `;
+}
+
+function renderSprays(){
+  const insights = getSprayInsights();
+
+  document.getElementById("sprayStatusBox").innerHTML = insights
+    ? `
+      <div class="big-next">Next due: ${insights.nextDate}</div>
+      <div><strong>Last spray:</strong> ${insights.last.product} • ${insights.last.activeIngredient}</div>
+      <div><strong>Recommended next group:</strong> ${insights.rotation ? insights.rotation.label : "—"}</div>
+      <div><strong>Recommended products:</strong> ${insights.rotation ? insights.rotation.products : "—"}</div>
+      ${insights.sameGroupWarning ? `<div class="alert red">⚠ ${insights.sameGroupWarning}</div>` : ``}
+      ${insights.sameAIWarning ? `<div class="alert red">⚠ ${insights.sameAIWarning}</div>` : ``}
+      ${insights.soilDue ? `<div class="alert yellow">🌱 Soil treatment due now.</div>` : `<div class="small-note">Next soil treatment target: ${insights.soilTreatmentDate}</div>`}
+    `
+    : `<div class="subtle">No sprays logged yet.</div>`;
+
+  document.getElementById("spraysTable").innerHTML = `
+    <table>
+      <tr>
+        <th>Date</th>
+        <th>Product</th>
+        <th>Active Ingredient</th>
+        <th>Group</th>
+        <th>Type</th>
+        <th>Bud Stage</th>
+      </tr>
+      ${
+        db.sprays.length
+          ? db.sprays.slice(0,20).map(s=>`
+            <tr>
+              <td>${s.date || ""}</td>
+              <td>${s.product || ""}</td>
+              <td>${s.activeIngredient || ""}</td>
+              <td>${s.group || ""}</td>
+              <td>${s.sprayType || ""} / ${s.organic || ""}</td>
+              <td>${s.budStage || ""}</td>
+            </tr>
+          `).join("")
+          : `<tr><td colspan="6">No sprays logged yet.</td></tr>`
+      }
+    </table>
+  `;
+}
+
+function renderTax(){
+  const yearly = {};
+
+  db.sales.forEach(s => {
+    const y = (s.date || "").slice(0,4);
+    if(!y) return;
+    yearly[y] ||= {sales:0, expenses:0, labor:0};
+    yearly[y].sales += Number(s.total || 0);
+  });
+
+  db.expenses.forEach(e => {
+    const y = (e.date || "").slice(0,4);
+    if(!y) return;
+    yearly[y] ||= {sales:0, expenses:0, labor:0};
+    yearly[y].expenses += Number(e.amount || 0);
+  });
+
+  db.labor.forEach(l => {
+    const y = (l.date || "").slice(0,4);
+    if(!y) return;
+    yearly[y] ||= {sales:0, expenses:0, labor:0};
+    yearly[y].labor += Number(l.pay || 0);
+  });
+
+  document.getElementById("taxYearlyTable").innerHTML = `
+    <table>
+      <tr><th>Year</th><th>Sales</th><th>Expenses</th><th>Labor</th><th>Profit</th></tr>
+      ${
+        Object.keys(yearly).length
+          ? Object.entries(yearly).sort().map(([y,v])=>`
+            <tr>
+              <td>${y}</td>
+              <td>${fmtMoney(v.sales)}</td>
+              <td>${fmtMoney(v.expenses)}</td>
+              <td>${fmtMoney(v.labor)}</td>
+              <td>${fmtMoney(v.sales - v.expenses - v.labor)}</td>
+            </tr>
+          `).join("")
+          : `<tr><td colspan="5">No yearly data yet.</td></tr>`
+      }
+    </table>
+  `;
+
+  const cats = {};
+  db.expenses.forEach(e => {
+    cats[e.category || "Other"] = (cats[e.category || "Other"] || 0) + Number(e.amount || 0);
+  });
+
+  document.getElementById("expenseCategoryTable").innerHTML = `
+    <table>
+      <tr><th>Category</th><th>Total</th></tr>
+      ${
+        Object.keys(cats).length
+          ? Object.entries(cats).map(([k,v])=>`
+            <tr>
+              <td>${k}</td>
+              <td>${fmtMoney(v)}</td>
+            </tr>
+          `).join("")
+          : `<tr><td colspan="2">No expenses yet.</td></tr>`
+      }
+    </table>
+  `;
+}
+
+function exportCSV(){
+  const rows = [["Date","Type","Description","Amount"]];
+
+  db.sales.forEach(s=>{
+    rows.push([s.date,"Sale",`${s.variety || ""} • ${s.customer || ""} • ${s.stems || 0} stems`,s.total]);
+  });
+
+  db.expenses.forEach(e=>{
+    rows.push([e.date,"Expense",`${e.category || ""} • ${e.vendor || ""}`,e.amount]);
+  });
+
+  db.labor.forEach(l=>{
+    rows.push([l.date,"Labor",`${l.worker || ""} • ${l.hours || 0} hrs @ ${l.rate || 0}`,l.pay]);
+  });
+
+  const csv = rows.map(r => r.map(x => `"${String(x ?? "").replace(/"/g,'""')}"`).join(",")).join("\\n");
+  const blob = new Blob([csv], {type:"text/csv"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "terrarose_farm_records.csv";
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(url), 500);
+}
+
+function renderAll(){
+  setDefaultDates();
+  renderDashboard();
+  renderSales();
+  renderExpenses();
+  renderLabor();
+  renderIrrigation();
+  renderSprays();
+  renderTax();
+}
+
+renderAll();
 </script>
 
 </body>
