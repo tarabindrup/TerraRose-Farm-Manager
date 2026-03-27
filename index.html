@@ -257,6 +257,15 @@ function saveExpense(){
   db.expenses.unshift({
     date:expDate.value,
     vendor:expVendor.value,
+    category:expCategory.value,
+    amount:Number(expAmount.value||0)
+  })
+  saveDB()
+  alert("Expense saved")
+}
+  db.expenses.unshift({
+    date:expDate.value,
+    vendor:expVendor.value,
     amount:Number(expAmount.value||0)
   })
   saveDB()
