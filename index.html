@@ -6,87 +6,21 @@
 <title>TerraRose Farm Manager</title>
 
 <style>
-body{
-font-family:-apple-system;
-background:#f7f2f5;
-margin:0;
-}
-
-header{
-background:#8b1e3f;
-color:white;
-padding:18px;
-text-align:center;
-font-size:22px;
-font-weight:bold;
-}
-
-.container{
-padding:14px;
-}
-
-.tabs{
-display:flex;
-flex-wrap:wrap;
-gap:6px;
-margin-bottom:12px;
-}
-
-.tab{
-background:#ead7de;
-border:none;
-padding:10px 12px;
-border-radius:20px;
-font-weight:bold;
-color:#8b1e3f;
-}
-
-.tab.active{
-background:#8b1e3f;
-color:white;
-}
-
-.card{
-background:white;
-padding:16px;
-border-radius:14px;
-margin-bottom:14px;
-box-shadow:0 3px 10px rgba(0,0,0,.08);
-}
-
+body{font-family:-apple-system;background:#f7f2f5;margin:0;}
+header{background:#8b1e3f;color:white;padding:18px;text-align:center;font-weight:bold;}
+.container{padding:12px;}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.tab{background:#ead7de;border:none;padding:8px 12px;border-radius:18px;font-weight:bold;color:#8b1e3f;}
+.tab.active{background:#8b1e3f;color:white;}
+.card{background:white;padding:14px;border-radius:12px;margin-bottom:12px;box-shadow:0 3px 8px rgba(0,0,0,.08);}
 .view{display:none;}
 .view.active{display:block;}
-
-label{
-font-weight:bold;
-margin-top:10px;
-display:block;
-}
-
-input,select,textarea{
-width:100%;
-padding:10px;
-border-radius:10px;
-border:1px solid #ddd;
-margin-top:4px;
-margin-bottom:8px;
-}
-
-button{
-background:#8b1e3f;
-color:white;
-border:none;
-padding:10px;
-border-radius:10px;
-font-weight:bold;
-margin-top:8px;
-}
-
-.alert{padding:10px;border-radius:10px;margin-top:8px;}
+input,select{width:100%;padding:8px;margin:4px 0 8px;border-radius:8px;border:1px solid #ddd;}
+button{background:#8b1e3f;color:white;border:none;padding:10px;border-radius:8px;}
+.alert{padding:10px;border-radius:8px;margin-top:8px;}
 .red{background:#ffe6e6;color:#b30000;}
 .green{background:#e6ffe6;color:#1e7e34;}
 .yellow{background:#fff7d6;color:#8a6b00;}
-
 </style>
 </head>
 
@@ -98,25 +32,59 @@ margin-top:8px;
 
 <div class="tabs">
 <button class="tab active" onclick="showTab('dashboard',this)">Dashboard</button>
+<button class="tab" onclick="showTab('sales',this)">Sales</button>
+<button class="tab" onclick="showTab('expenses',this)">Expenses</button>
+<button class="tab" onclick="showTab('labor',this)">Labor</button>
 <button class="tab" onclick="showTab('spray',this)">Spray</button>
 <button class="tab" onclick="showTab('fert',this)">Fertilizer</button>
 <button class="tab" onclick="showTab('soil',this)">Soil</button>
 <button class="tab" onclick="showTab('irrigation',this)">Irrigation</button>
+<button class="tab" onclick="showTab('tax',this)">Tax</button>
 </div>
 
 <div id="dashboard" class="view active">
 <div class="card">
-<h3>🌹 Farm Dashboard</h3>
+<h3>Farm Dashboard</h3>
 <div id="dashboardContent"></div>
 </div>
 </div>
 
-<div id="spray" class="view">
+<div id="sales" class="view">
 <div class="card">
-<h3>🧪 Spray Log</h3>
+<h3>Sales</h3>
+<input type="date" id="saleDate">
+<input placeholder="Customer" id="saleCustomer">
+<input placeholder="Variety" id="saleVariety">
+<input type="number" placeholder="Stems" id="saleStems">
+<input type="number" placeholder="Price" id="salePrice">
+<button onclick="saveSale()">Save</button>
+</div>
+</div>
 
-<label>Product</label>
-<select id="product" onchange="autoFill()">
+<div id="expenses" class="view">
+<div class="card">
+<h3>Expenses</h3>
+<input type="date" id="expDate">
+<input placeholder="Vendor" id="expVendor">
+<input type="number" placeholder="Amount" id="expAmount">
+<button onclick="saveExpense()">Save</button>
+</div>
+</div>
+
+<div id="labor" class="view">
+<div class="card">
+<h3>Labor</h3>
+<input type="date" id="laborDate">
+<input placeholder="Worker" id="laborWorker">
+<input type="number" placeholder="Hours" id="laborHours">
+<input type="number" placeholder="Rate" id="laborRate">
+<button onclick="saveLabor()">Save</button>
+</div>
+</div><div id="spray" class="view">
+<div class="card">
+<h3>Spray Program</h3>
+
+<select id="sprayProduct" onchange="autoFillProduct()">
 <option>Safari</option>
 <option>Spinosad</option>
 <option>Acephate</option>
@@ -128,125 +96,105 @@ margin-top:8px;
 <option>Bacillus subtilis</option>
 </select>
 
-<label>Active Ingredient</label>
-<input id="ai">
+<input placeholder="Active Ingredient" id="sprayAI">
+<input placeholder="IRAC" id="sprayIRAC">
+<input placeholder="FRAC" id="sprayFRAC">
 
-<label>IRAC</label>
-<input id="irac">
-
-<label>FRAC</label>
-<input id="frac">
-
-<label>Rotation Group</label>
-<select id="group">
+<select id="sprayGroup">
 <option value="1">🔴 Group 1</option>
 <option value="2">🟢 Group 2</option>
 <option value="3">🟠 Group 3</option>
 <option value="4">🔵 Group 4</option>
 </select>
 
-<label>Date</label>
 <input type="date" id="sprayDate">
+<input placeholder="Mix Instructions" id="sprayMix">
+<input type="number" placeholder="Repeat Interval Days" id="sprayInterval" value="7">
+
+<select id="sprayType">
+<option>Preventive</option>
+<option>Curative</option>
+</select>
+
+<select id="sprayOrganic">
+<option>Organic</option>
+<option>Inorganic</option>
+</select>
 
 <button onclick="saveSpray()">Save Spray</button>
-
+<div id="sprayStatus"></div>
 </div>
 </div>
 
 <div id="fert" class="view">
 <div class="card">
-<h3>🌿 Fertilizer Log</h3>
-
-<label>Product</label>
-<input id="fertProduct">
-
-<label>Type</label>
+<h3>Fertilizer</h3>
+<input type="date" id="fertDate">
+<input placeholder="Product" id="fertProduct">
 <select id="fertType">
 <option>🟢 Nitrogen</option>
 <option>🌸 Bloom</option>
 <option>🟠 Potassium</option>
 <option>🌱 Organic</option>
 </select>
-
-<label>Method</label>
 <select id="fertMethod">
 <option>Soil</option>
 <option>Foliar</option>
 <option>Granular</option>
 </select>
-
-<label>Date</label>
-<input type="date" id="fertDate">
-
 <button onclick="saveFert()">Save Fertilizer</button>
-
 </div>
 </div>
 
 <div id="soil" class="view">
 <div class="card">
-<h3>🌱 Soil Test</h3>
-
-<label>pH</label>
-<input id="ph">
-
-<label>N</label>
-<input id="n">
-
-<label>P</label>
-<input id="p">
-
-<label>K</label>
-<input id="k">
-
-<label>Organic Matter %</label>
-<input id="om">
-
+<h3>Soil Test</h3>
+<input placeholder="pH" id="soilPH">
+<input placeholder="N" id="soilN">
+<input placeholder="P" id="soilP">
+<input placeholder="K" id="soilK">
+<input placeholder="Organic Matter %" id="soilOM">
 <button onclick="saveSoil()">Save Soil Test</button>
-
 </div>
-</div><div id="irrigation" class="view">
+</div>
+
+<div id="irrigation" class="view">
 <div class="card">
-<h3>💧 Drip Irrigation Tracker</h3>
-
-<label>Date</label>
+<h3>Irrigation</h3>
 <input type="date" id="waterDate">
-
-<label>Row / Bed Name</label>
-<input id="rowName">
-
-<label>Row Length (feet)</label>
-<input type="number" id="rowLength">
-
-<label>Minutes Run</label>
-<input type="number" id="minutesRun">
-
-<label>Flow Rate (GPM per 100 ft)</label>
-<input type="number" step="0.01" id="flowRate" value="0.4">
-
-<label>Plants in Row (optional)</label>
-<input type="number" id="plantsInRow">
-
+<input placeholder="Row / Bed Name" id="waterRow">
+<input type="number" placeholder="Row Length Feet" id="waterRowLength">
+<input type="number" placeholder="Minutes Run" id="waterMinutes">
+<input type="number" step="0.01" placeholder="Flow Rate GPM per 100 ft" id="waterFlow" value="0.4">
+<input type="number" placeholder="Plants in Row (optional)" id="waterPlants">
 <button onclick="calcWater()">Calculate Water</button>
 <div id="waterResult"></div>
-
 <button onclick="saveWater()">Save Irrigation</button>
-
 <div id="weeklyWater"></div>
+</div>
+</div>
+
+<div id="tax" class="view">
+<div class="card">
+<h3>Tax Summary</h3>
+<div id="taxSummary"></div>
+<button onclick="exportCSV()">Export CSV</button>
 </div>
 </div>
 
 </div>
 
 <script>
-let db = JSON.parse(localStorage.getItem("terraroseFarmV18") || "{}")
-
+let db = JSON.parse(localStorage.getItem("terraroseFarmV19") || "{}")
+db.sales ||= []
+db.expenses ||= []
+db.labor ||= []
 db.sprays ||= []
 db.fert ||= []
 db.soil ||= []
 db.water ||= []
 
-const library = {
+const productLibrary = {
   "Safari": {ai:"Dinotefuran", irac:"4A", frac:"", group:"1"},
   "Spinosad": {ai:"Spinosad", irac:"5", frac:"", group:"2"},
   "Acephate": {ai:"Acephate", irac:"1B", frac:"", group:"3"},
@@ -259,7 +207,7 @@ const library = {
 }
 
 function saveDB(){
-  localStorage.setItem("terraroseFarmV18", JSON.stringify(db))
+  localStorage.setItem("terraroseFarmV19", JSON.stringify(db))
   renderDashboard()
 }
 
@@ -270,23 +218,62 @@ function showTab(id,btn){
   btn.classList.add("active")
 }
 
-function autoFill(){
-  let p = document.getElementById("product").value
-  let d = library[p]
-  document.getElementById("ai").value = d.ai
-  document.getElementById("irac").value = d.irac
-  document.getElementById("frac").value = d.frac
-  document.getElementById("group").value = d.group
+function autoFillProduct(){
+  let p = document.getElementById("sprayProduct").value
+  let item = productLibrary[p]
+  sprayAI.value = item.ai
+  sprayIRAC.value = item.irac
+  sprayFRAC.value = item.frac
+  sprayGroup.value = item.group
+}
+
+function saveSale(){
+  db.sales.unshift({
+    date:saleDate.value,
+    customer:saleCustomer.value,
+    variety:saleVariety.value,
+    stems:Number(saleStems.value||0),
+    price:Number(salePrice.value||0),
+    total:Number(saleStems.value||0)*Number(salePrice.value||0)
+  })
+  saveDB()
+  alert("Sale saved")
+}
+
+function saveExpense(){
+  db.expenses.unshift({
+    date:expDate.value,
+    vendor:expVendor.value,
+    amount:Number(expAmount.value||0)
+  })
+  saveDB()
+  alert("Expense saved")
+}
+
+function saveLabor(){
+  db.labor.unshift({
+    date:laborDate.value,
+    worker:laborWorker.value,
+    hours:Number(laborHours.value||0),
+    rate:Number(laborRate.value||0),
+    pay:Number(laborHours.value||0)*Number(laborRate.value||0)
+  })
+  saveDB()
+  alert("Labor saved")
 }
 
 function saveSpray(){
   db.sprays.unshift({
-    product:product.value,
-    ai:ai.value,
-    irac:irac.value,
-    frac:frac.value,
-    group:group.value,
-    date:sprayDate.value
+    product:sprayProduct.value,
+    ai:sprayAI.value,
+    irac:sprayIRAC.value,
+    frac:sprayFRAC.value,
+    group:sprayGroup.value,
+    date:sprayDate.value,
+    mix:sprayMix.value,
+    interval:Number(sprayInterval.value||7),
+    type:sprayType.value,
+    organic:sprayOrganic.value
   })
   saveDB()
   alert("Spray saved")
@@ -294,10 +281,10 @@ function saveSpray(){
 
 function saveFert(){
   db.fert.unshift({
+    date:fertDate.value,
     product:fertProduct.value,
     type:fertType.value,
-    method:fertMethod.value,
-    date:fertDate.value
+    method:fertMethod.value
   })
   saveDB()
   alert("Fertilizer saved")
@@ -305,54 +292,49 @@ function saveFert(){
 
 function saveSoil(){
   db.soil.unshift({
-    ph:ph.value,
-    n:n.value,
-    p:p.value,
-    k:k.value,
-    om:om.value,
-    date:new Date().toISOString().slice(0,10)
+    date:new Date().toISOString().slice(0,10),
+    ph:soilPH.value,
+    n:soilN.value,
+    p:soilP.value,
+    k:soilK.value,
+    om:soilOM.value
   })
   saveDB()
   alert("Soil test saved")
 }
 
-function calcWater(){
-  let rowFeet = Number(rowLength.value || 0)
-  let mins = Number(minutesRun.value || 0)
-  let rate = Number(flowRate.value || 0)
-  let plants = Number(plantsInRow.value || 0)
+function calcWaterMath(){
+  let rowFeet = Number(waterRowLength.value||0)
+  let mins = Number(waterMinutes.value||0)
+  let rate = Number(waterFlow.value||0)
+  let plants = Number(waterPlants.value||0)
 
   let gpm = (rate / 100) * rowFeet
   let totalGallons = gpm * mins
   let perPlant = plants ? totalGallons / plants : 0
 
-  let text = "<div class='green alert'>Total water: <b>" + totalGallons.toFixed(2) + " gallons</b></div>"
-  if(plants){
-    text += "<div class='green alert'>Per plant: <b>" + perPlant.toFixed(2) + " gallons</b></div>"
-  }
+  return {totalGallons, perPlant}
+}
 
-  waterResult.innerHTML = text
+function calcWater(){
+  let r = calcWaterMath()
+  let html = "<div class='green alert'>Total water: <b>"+r.totalGallons.toFixed(2)+" gallons</b></div>"
+  if(Number(waterPlants.value||0)){
+    html += "<div class='green alert'>Per plant: <b>"+r.perPlant.toFixed(2)+" gallons</b></div>"
+  }
+  waterResult.innerHTML = html
 }
 
 function saveWater(){
-  let rowFeet = Number(rowLength.value || 0)
-  let mins = Number(minutesRun.value || 0)
-  let rate = Number(flowRate.value || 0)
-  let plants = Number(plantsInRow.value || 0)
-
-  let gpm = (rate / 100) * rowFeet
-  let totalGallons = gpm * mins
-  let perPlant = plants ? totalGallons / plants : 0
-
+  let r = calcWaterMath()
   db.water.unshift({
     date:waterDate.value,
-    row:rowName.value,
-    rowFeet:rowFeet,
-    mins:mins,
-    totalGallons:totalGallons,
-    perPlant:perPlant
+    row:waterRow.value,
+    rowFeet:Number(waterRowLength.value||0),
+    mins:Number(waterMinutes.value||0),
+    totalGallons:r.totalGallons,
+    perPlant:r.perPlant
   })
-
   saveDB()
   alert("Water log saved")
 }
@@ -362,33 +344,26 @@ function weeklyWaterTotal(){
   let weekAgo = new Date()
   weekAgo.setDate(today.getDate()-7)
 
-  let total = db.water.filter(w=>{
-    return new Date(w.date) >= weekAgo
-  }).reduce((sum,w)=>sum + Number(w.totalGallons || 0), 0)
-
-  return total
+  return db.water.filter(w=>new Date(w.date) >= weekAgo)
+    .reduce((sum,w)=>sum+Number(w.totalGallons||0),0)
 }
 
-function resistanceWarning(){
+function resistanceAlerts(){
   if(db.sprays.length < 2) return ""
 
   let last = db.sprays[0]
   let prev = db.sprays[1]
-
   let alerts = ""
 
   if(last.ai && prev.ai && last.ai === prev.ai){
-    alerts += "<div class='red alert'>⚠ Same active ingredient used 2 times in a row: " + last.ai + "</div>"
+    alerts += "<div class='red alert'>⚠ Same active ingredient used 2 times in a row: "+last.ai+"</div>"
   }
-
   if(last.irac && prev.irac && last.irac === prev.irac){
-    alerts += "<div class='red alert'>⚠ Same IRAC repeated: " + last.irac + "</div>"
+    alerts += "<div class='red alert'>⚠ Same IRAC repeated: "+last.irac+"</div>"
   }
-
   if(last.frac && prev.frac && last.frac === prev.frac){
-    alerts += "<div class='red alert'>⚠ Same FRAC repeated: " + last.frac + "</div>"
+    alerts += "<div class='red alert'>⚠ Same FRAC repeated: "+last.frac+"</div>"
   }
-
   return alerts
 }
 
@@ -396,8 +371,8 @@ function nextSpraySuggestion(){
   if(db.sprays.length === 0) return "<div class='yellow alert'>No sprays logged yet</div>"
 
   let last = db.sprays[0]
-  let nextGroup = Number(last.group) + 1
-  if(nextGroup > 4) nextGroup = 1
+  let nextGroup = Number(last.group)+1
+  if(nextGroup>4) nextGroup=1
 
   let groupNames = {
     1:"🔴 Group 1 – Strong Knockdown",
@@ -406,8 +381,9 @@ function nextSpraySuggestion(){
     4:"🔵 Group 4 – Maintenance"
   }
 
-  let products = Object.keys(library).filter(k => library[k].group == nextGroup)
-  return "<div class='green alert'><b>Next Recommended Rotation:</b> " + groupNames[nextGroup] + "<br>Products: " + products.join(", ") + "</div>"
+  let products = Object.keys(productLibrary).filter(k => productLibrary[k].group == nextGroup)
+
+  return "<div class='green alert'><b>Next Recommended Rotation:</b> "+groupNames[nextGroup]+"<br>Products: "+products.join(", ")+"</div>"
 }
 
 function fertReminder(){
@@ -416,13 +392,12 @@ function fertReminder(){
   let last = new Date(db.fert[0].date)
   let next = new Date(last)
   next.setDate(last.getDate()+14)
-
   let today = new Date()
 
   if(today >= next){
     return "<div class='yellow alert'>🌿 Fertilizer may be due now</div>"
   } else {
-    return "<div class='green alert'>Next fertilizer check around: " + next.toISOString().slice(0,10) + "</div>"
+    return "<div class='green alert'>Next fertilizer check around: "+next.toISOString().slice(0,10)+"</div>"
   }
 }
 
@@ -430,25 +405,58 @@ function soilSummary(){
   if(db.soil.length === 0) return "<div class='yellow alert'>No soil tests logged yet</div>"
 
   let s = db.soil[0]
-  let note = "<div class='green alert'>Latest soil test — pH: " + s.ph + ", N: " + s.n + ", P: " + s.p + ", K: " + s.k + ", OM: " + s.om + "%</div>"
+  let note = "<div class='green alert'>Latest soil test — pH: "+s.ph+", N: "+s.n+", P: "+s.p+", K: "+s.k+", OM: "+s.om+"%</div>"
 
   if(Number(s.ph) > 7.5){
     note += "<div class='yellow alert'>⚠ Soil pH is high. Consider sulfur / acidifier if appropriate.</div>"
   }
-
   return note
 }
 
 function renderDashboard(){
+  let salesTotal = db.sales.reduce((s,x)=>s+Number(x.total||0),0)
+  let expenseTotal = db.expenses.reduce((s,x)=>s+Number(x.amount||0),0)
+  let laborTotal = db.labor.reduce((s,x)=>s+Number(x.pay||0),0)
+  let profit = salesTotal - expenseTotal - laborTotal
+
   dashboardContent.innerHTML =
+    "<div class='green alert'><b>Total Sales:</b> $"+salesTotal.toFixed(2)+"</div>" +
+    "<div class='red alert'><b>Total Expenses:</b> $"+expenseTotal.toFixed(2)+"</div>" +
+    "<div class='yellow alert'><b>Total Labor:</b> $"+laborTotal.toFixed(2)+"</div>" +
+    "<div class='green alert'><b>Net Profit:</b> $"+profit.toFixed(2)+"</div>" +
     nextSpraySuggestion() +
-    resistanceWarning() +
+    resistanceAlerts() +
     fertReminder() +
     soilSummary() +
-    "<div class='green alert'>💧 Weekly water total: <b>" + weeklyWaterTotal().toFixed(2) + " gallons</b></div>"
+    "<div class='green alert'>💧 Weekly water total: <b>"+weeklyWaterTotal().toFixed(2)+" gallons</b></div>"
+
+  sprayStatus.innerHTML = nextSpraySuggestion() + resistanceAlerts()
+  weeklyWater.innerHTML = "<div class='green alert'>Weekly water total: <b>"+weeklyWaterTotal().toFixed(2)+" gallons</b></div>"
+
+  taxSummary.innerHTML =
+    "<div class='green alert'>Sales: $"+salesTotal.toFixed(2)+"</div>" +
+    "<div class='red alert'>Expenses: $"+expenseTotal.toFixed(2)+"</div>" +
+    "<div class='yellow alert'>Labor: $"+laborTotal.toFixed(2)+"</div>" +
+    "<div class='green alert'><b>Profit: $"+profit.toFixed(2)+"</b></div>"
 }
 
-autoFill()
+function exportCSV(){
+  let rows=[["Date","Type","Description","Amount"]]
+
+  db.sales.forEach(s=>rows.push([s.date,"Sale",(s.variety||"")+" stems",s.total]))
+  db.expenses.forEach(e=>rows.push([e.date,"Expense",e.vendor,e.amount]))
+  db.labor.forEach(l=>rows.push([l.date,"Labor",l.worker,l.pay]))
+
+  let csv = rows.map(r=>r.join(",")).join("\\n")
+  let blob = new Blob([csv],{type:"text/csv"})
+  let url = URL.createObjectURL(blob)
+  let a = document.createElement("a")
+  a.href = url
+  a.download = "terrarose_records.csv"
+  a.click()
+}
+
+autoFillProduct()
 renderDashboard()
 </script>
 
