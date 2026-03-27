@@ -173,33 +173,3 @@ let soilReminder=""
 let soilDate = addDays(lastDate,28)
 
 if(today > soilDate){
-
-soilReminder="<div class='alert'>🌱 Soil treatment due (nematodes or azadirachtin drench).</div>"
-
-}
-
-document.getElementById("dashboard").innerHTML=
-
-"<div class='good'>Last Spray: "+last.date+"</div>"+
-
-"<div>Product: "+last.product+"</div>"+
-
-"<div>Group Used: "+last.group+"</div>"+
-
-"<div><strong>Next Spray Due: "+nextDate.toDateString()+"</strong></div>"+
-
-"<div>Recommended Rotation Group: "+nextGroup+"</div>"+
-
-warning+
-
-soilReminder
-
-}
-
-updateDashboard()
-
-</script>
-
-</body>
-
-</html>
