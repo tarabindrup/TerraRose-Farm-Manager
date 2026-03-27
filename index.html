@@ -2,11 +2,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>TerraRose Farm Manager</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<style>
+<title>TerraRose Farm Manager</title>
 
+<style>
 body{
 font-family:Arial;
 background:#f6f7f8;
@@ -17,159 +17,245 @@ padding:0;
 header{
 background:#8b1e3f;
 color:white;
-padding:15px;
+padding:16px;
 font-size:22px;
+font-weight:bold;
 text-align:center;
 }
 
 .container{
-padding:20px;
+padding:16px;
+}
+
+.tabs{
+display:flex;
+flex-wrap:wrap;
+gap:6px;
+margin-bottom:16px;
+}
+
+.tab{
+background:#ead7de;
+border:none;
+padding:10px 14px;
+border-radius:18px;
+font-weight:bold;
+color:#8b1e3f;
+}
+
+.tab.active{
+background:#8b1e3f;
+color:white;
 }
 
 .card{
 background:white;
-border-radius:10px;
-padding:20px;
-margin-bottom:15px;
-box-shadow:0 2px 8px rgba(0,0,0,0.1);
+padding:16px;
+border-radius:12px;
+margin-bottom:16px;
+box-shadow:0 3px 8px rgba(0,0,0,0.08);
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin-top:6px;
+margin-bottom:10px;
+border-radius:8px;
+border:1px solid #ddd;
 }
 
 button{
 background:#8b1e3f;
 color:white;
 border:none;
-padding:10px 16px;
-border-radius:6px;
-margin-top:10px;
+padding:10px 14px;
+border-radius:8px;
 }
 
-input{
-padding:10px;
+.view{
+display:none;
+}
+
+.view.active{
+display:block;
+}
+
+table{
 width:100%;
-margin-top:5px;
-margin-bottom:10px;
+border-collapse:collapse;
 }
 
-.alert{
-background:#ffe6e6;
-padding:10px;
-border-radius:6px;
-color:#b30000;
-margin-top:10px;
-}
-
-.good{
-background:#e6ffe6;
-padding:10px;
-border-radius:6px;
-color:#1e7e34;
-margin-top:10px;
+td,th{
+border-bottom:1px solid #eee;
+padding:8px;
+text-align:left;
 }
 
 </style>
-
 </head>
 
 <body>
 
-<header>
-🌹 TerraRose Farm Manager
-</header>
+<header>🌹 TerraRose Farm Manager</header>
 
 <div class="container">
 
-<div class="card">
-
-<h3>Log Spray</h3>
-
-<label>Date</label>
-<input type="date" id="sprayDate">
-
-<label>Rotation Group</label>
-<input type="number" id="group" min="1" max="4">
-
-<label>Product Used</label>
-<input type="text" id="product">
-
-<button onclick="logSpray()">Save Spray</button>
-
+<div class="tabs">
+<button class="tab active" onclick="showTab('dashboard',this)">Dashboard</button>
+<button class="tab" onclick="showTab('sales',this)">Sales</button>
+<button class="tab" onclick="showTab('expenses',this)">Expenses</button>
+<button class="tab" onclick="showTab('labor',this)">Labor</button>
+<button class="tab" onclick="showTab('irrigation',this)">Irrigation</button>
+<button class="tab" onclick="showTab('spray',this)">Spray Program</button>
+<button class="tab" onclick="showTab('tax',this)">Tax Reports</button>
 </div>
 
+<div id="dashboard" class="view active">
 <div class="card">
+<h2>Dashboard</h2>
+<p>Your farm summary will appear here.</p>
+</div>
+</div>
 
-<h3>Spray Dashboard</h3>
+<div id="sales" class="view">
+<div class="card">
+<h2>Sales</h2>
 
-<div id="dashboard"></div>
+<label>Date</label>
+<input type="date">
 
+<label>Customer</label>
+<input>
+
+<label>Variety</label>
+<input>
+
+<label>Stems</label>
+<input type="number">
+
+<label>Price per stem</label>
+<input type="number">
+
+<button>Save Sale</button>
+
+</div>
+</div>
+
+<div id="expenses" class="view">
+<div class="card">
+<h2>Expenses</h2>
+
+<label>Date</label>
+<input type="date">
+
+<label>Vendor</label>
+<input>
+
+<label>Category</label>
+<select>
+<option>Supplies</option>
+<option>Pesticides</option>
+<option>Fertilizer</option>
+<option>Equipment</option>
+<option>Fuel</option>
+</select>
+
+<label>Amount</label>
+<input type="number">
+
+<button>Save Expense</button>
+
+</div>
+</div>
+
+<div id="labor" class="view">
+<div class="card">
+<h2>Labor</h2>
+
+<label>Date</label>
+<input type="date">
+
+<label>Worker</label>
+<input>
+
+<label>Hours</label>
+<input type="number">
+
+<label>Rate</label>
+<input type="number">
+
+<button>Save Labor</button>
+
+</div>
+</div>
+
+<div id="irrigation" class="view">
+<div class="card">
+<h2>Irrigation</h2>
+
+<label>Minutes drip ran</label>
+<input type="number">
+
+<label>Emitters per plant</label>
+<input type="number">
+
+<label>GPH per emitter</label>
+<input type="number">
+
+<button>Calculate Water</button>
+
+</div>
+</div>
+
+<div id="spray" class="view">
+<div class="card">
+<h2>Spray Program</h2>
+
+<label>Date</label>
+<input type="date">
+
+<label>Product Used</label>
+<input>
+
+<label>Active Ingredient</label>
+<input>
+
+<label>Rotation Group</label>
+<input>
+
+<button>Save Spray</button>
+
+</div>
+</div>
+
+<div id="tax" class="view">
+<div class="card">
+<h2>Tax Reports</h2>
+<p>Farm tax summaries will appear here.</p>
+</div>
 </div>
 
 </div>
 
 <script>
 
-let sprayLog = JSON.parse(localStorage.getItem("sprayLog") || "[]")
+function showTab(id,btn){
 
-function logSpray(){
-
-let date = document.getElementById("sprayDate").value
-let group = parseInt(document.getElementById("group").value)
-let product = document.getElementById("product").value
-
-sprayLog.push({
-date:date,
-group:group,
-product:product
+document.querySelectorAll(".view").forEach(v=>{
+v.classList.remove("active")
 })
 
-localStorage.setItem("sprayLog",JSON.stringify(sprayLog))
+document.querySelectorAll(".tab").forEach(t=>{
+t.classList.remove("active")
+})
 
-updateDashboard()
-
-}
-
-function addDays(date,days){
-
-let result = new Date(date)
-result.setDate(result.getDate()+days)
-return result
+document.getElementById(id).classList.add("active")
+btn.classList.add("active")
 
 }
 
-function updateDashboard(){
+</script>
 
-if(sprayLog.length===0){
-document.getElementById("dashboard").innerHTML="No sprays logged yet."
-return
-}
-
-let last = sprayLog[sprayLog.length-1]
-
-let lastDate = new Date(last.date)
-
-let nextDate = addDays(lastDate,7)
-
-let nextGroup = last.group + 1
-
-if(nextGroup>4){
-nextGroup=1
-}
-
-let today = new Date()
-
-let warning=""
-
-if(sprayLog.length>1){
-
-let prev = sprayLog[sprayLog.length-2]
-
-if(prev.group===last.group){
-warning="<div class='alert'>⚠ Resistance warning: same spray group repeated.</div>"
-}
-
-}
-
-let soilReminder=""
-
-let soilDate = addDays(lastDate,28)
-
-if(today > soilDate){
+</body>
+</html>
