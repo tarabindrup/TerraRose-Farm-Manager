@@ -7,20 +7,20 @@
 <title>TerraRose Farm Manager</title>
 
 <style>
+
 body{
 font-family:Arial;
 background:#f6f7f8;
 margin:0;
-padding:0;
 }
 
 header{
 background:#8b1e3f;
 color:white;
-padding:16px;
+padding:18px;
+text-align:center;
 font-size:22px;
 font-weight:bold;
-text-align:center;
 }
 
 .container{
@@ -30,7 +30,7 @@ padding:16px;
 .tabs{
 display:flex;
 flex-wrap:wrap;
-gap:6px;
+gap:8px;
 margin-bottom:16px;
 }
 
@@ -53,7 +53,7 @@ background:white;
 padding:16px;
 border-radius:12px;
 margin-bottom:16px;
-box-shadow:0 3px 8px rgba(0,0,0,0.08);
+box-shadow:0 3px 8px rgba(0,0,0,.08);
 }
 
 input,select{
@@ -71,6 +71,7 @@ color:white;
 border:none;
 padding:10px 14px;
 border-radius:8px;
+font-weight:bold;
 }
 
 .view{
@@ -81,15 +82,20 @@ display:none;
 display:block;
 }
 
-table{
-width:100%;
-border-collapse:collapse;
+.alert{
+background:#ffe6e6;
+padding:10px;
+border-radius:6px;
+color:#b30000;
+margin-top:10px;
 }
 
-td,th{
-border-bottom:1px solid #eee;
-padding:8px;
-text-align:left;
+.good{
+background:#e6ffe6;
+padding:10px;
+border-radius:6px;
+color:#1e7e34;
+margin-top:10px;
 }
 
 </style>
@@ -102,6 +108,7 @@ text-align:left;
 <div class="container">
 
 <div class="tabs">
+
 <button class="tab active" onclick="showTab('dashboard',this)">Dashboard</button>
 <button class="tab" onclick="showTab('sales',this)">Sales</button>
 <button class="tab" onclick="showTab('expenses',this)">Expenses</button>
@@ -109,40 +116,48 @@ text-align:left;
 <button class="tab" onclick="showTab('irrigation',this)">Irrigation</button>
 <button class="tab" onclick="showTab('spray',this)">Spray Program</button>
 <button class="tab" onclick="showTab('tax',this)">Tax Reports</button>
+
 </div>
 
 <div id="dashboard" class="view active">
+
 <div class="card">
-<h2>Dashboard</h2>
-<p>Your farm summary will appear here.</p>
+<h2>Farm Dashboard</h2>
+
+<div id="sprayAlert"></div>
+
 </div>
+
 </div>
 
 <div id="sales" class="view">
+
 <div class="card">
 <h2>Sales</h2>
 
 <label>Date</label>
-<input type="date">
+<input type="date" id="saleDate">
 
 <label>Customer</label>
-<input>
+<input id="saleCustomer">
 
 <label>Variety</label>
-<input>
+<input id="saleVariety">
 
 <label>Stems</label>
-<input type="number">
+<input type="number" id="saleStems">
 
-<label>Price per stem</label>
-<input type="number">
+<label>Price Per Stem</label>
+<input type="number" id="salePrice">
 
-<button>Save Sale</button>
+<button onclick="saveSale()">Save Sale</button>
 
 </div>
+
 </div>
 
 <div id="expenses" class="view">
+
 <div class="card">
 <h2>Expenses</h2>
 
@@ -167,9 +182,11 @@ text-align:left;
 <button>Save Expense</button>
 
 </div>
+
 </div>
 
 <div id="labor" class="view">
+
 <div class="card">
 <h2>Labor</h2>
 
@@ -188,57 +205,90 @@ text-align:left;
 <button>Save Labor</button>
 
 </div>
-</div>
 
-<div id="irrigation" class="view">
+</div><div id="irrigation" class="view">
+
 <div class="card">
 <h2>Irrigation</h2>
 
-<label>Minutes drip ran</label>
-<input type="number">
+<label>Minutes Drip Ran</label>
+<input type="number" id="irrigationMinutes">
 
-<label>Emitters per plant</label>
-<input type="number">
+<label>Emitters Per Plant</label>
+<input type="number" id="emittersPerPlant" value="2">
 
-<label>GPH per emitter</label>
-<input type="number">
+<label>GPH Per Emitter</label>
+<input type="number" id="gphPerEmitter" value="0.5">
 
-<button>Calculate Water</button>
+<button onclick="calculateWater()">Calculate Water</button>
+
+<div id="waterResult"></div>
 
 </div>
+
 </div>
 
 <div id="spray" class="view">
+
 <div class="card">
 <h2>Spray Program</h2>
 
 <label>Date</label>
-<input type="date">
+<input type="date" id="sprayDate">
 
 <label>Product Used</label>
-<input>
+<input type="text" id="product">
 
 <label>Active Ingredient</label>
-<input>
+<input type="text" id="activeIngredient">
 
 <label>Rotation Group</label>
-<input>
+<input type="number" id="group" min="1" max="4">
 
-<button>Save Spray</button>
+<label>Preventive or Curative</label>
+<select id="sprayType">
+<option>Preventive</option>
+<option>Curative</option>
+</select>
+
+<label>Organic or Inorganic</label>
+<select id="organicType">
+<option>Organic</option>
+<option>Inorganic</option>
+</select>
+
+<label>Mixing Instructions</label>
+<input type="text" id="mixInstructions" placeholder="Example: 1–2 oz per 5 gallons">
+
+<label>Repeat Interval (days)</label>
+<input type="number" id="interval" value="7">
+
+<button onclick="logSpray()">Save Spray</button>
 
 </div>
+
+<div class="card">
+<h2>Spray Dashboard</h2>
+<div id="dashboardSpray"></div>
+</div>
+
 </div>
 
 <div id="tax" class="view">
+
 <div class="card">
 <h2>Tax Reports</h2>
-<p>Farm tax summaries will appear here.</p>
+<p>Farm tax summaries and exports can go here.</p>
 </div>
+
 </div>
 
 </div>
 
 <script>
+
+let sprayLog = JSON.parse(localStorage.getItem("sprayLog") || "[]")
+let salesLog = JSON.parse(localStorage.getItem("salesLog") || "[]")
 
 function showTab(id,btn){
 
@@ -254,6 +304,158 @@ document.getElementById(id).classList.add("active")
 btn.classList.add("active")
 
 }
+
+function saveSale(){
+
+let date = document.getElementById("saleDate").value
+let customer = document.getElementById("saleCustomer").value
+let variety = document.getElementById("saleVariety").value
+let stems = Number(document.getElementById("saleStems").value || 0)
+let price = Number(document.getElementById("salePrice").value || 0)
+
+salesLog.push({
+date:date,
+customer:customer,
+variety:variety,
+stems:stems,
+price:price,
+total:stems*price
+})
+
+localStorage.setItem("salesLog",JSON.stringify(salesLog))
+alert("Sale saved")
+
+}
+
+function calculateWater(){
+
+let minutes = Number(document.getElementById("irrigationMinutes").value || 0)
+let emitters = Number(document.getElementById("emittersPerPlant").value || 0)
+let gph = Number(document.getElementById("gphPerEmitter").value || 0)
+
+let gallons = (minutes/60) * emitters * gph
+
+document.getElementById("waterResult").innerHTML =
+"<div class='good'>Each plant received approximately <strong>"+gallons.toFixed(2)+" gallons</strong> of water.</div>"
+
+}
+
+function logSpray(){
+
+let date = document.getElementById("sprayDate").value
+let group = parseInt(document.getElementById("group").value)
+let product = document.getElementById("product").value
+let activeIngredient = document.getElementById("activeIngredient").value
+let sprayType = document.getElementById("sprayType").value
+let organicType = document.getElementById("organicType").value
+let mixInstructions = document.getElementById("mixInstructions").value
+let interval = parseInt(document.getElementById("interval").value || 7)
+
+sprayLog.push({
+date:date,
+group:group,
+product:product,
+activeIngredient:activeIngredient,
+sprayType:sprayType,
+organicType:organicType,
+mixInstructions:mixInstructions,
+interval:interval
+})
+
+localStorage.setItem("sprayLog",JSON.stringify(sprayLog))
+
+updateDashboard()
+
+alert("Spray saved")
+
+}
+
+function addDays(date,days){
+
+let result = new Date(date)
+result.setDate(result.getDate()+days)
+return result
+
+}
+
+function updateDashboard(){
+
+if(sprayLog.length===0){
+document.getElementById("dashboardSpray").innerHTML="No sprays logged yet."
+document.getElementById("sprayAlert").innerHTML="No spray alerts yet."
+return
+}
+
+let last = sprayLog[sprayLog.length-1]
+let lastDate = new Date(last.date)
+let nextDate = addDays(lastDate,last.interval || 7)
+
+let nextGroup = last.group + 1
+if(nextGroup>4){
+nextGroup = 1
+}
+
+let today = new Date()
+
+let warning = ""
+
+if(sprayLog.length>1){
+
+let prev = sprayLog[sprayLog.length-2]
+
+if(prev.group===last.group){
+warning = "<div class='alert'>⚠ Resistance warning: same spray group repeated.</div>"
+}
+
+}
+
+let soilReminder = ""
+let soilDate = addDays(lastDate,28)
+
+if(today > soilDate){
+soilReminder = "<div class='alert'>🌱 Soil treatment due (beneficial nematodes or azadirachtin drench).</div>"
+}
+
+let dueText = ""
+let diff = Math.ceil((nextDate - today)/(1000*60*60*24))
+
+if(diff <= 0){
+dueText = "<div class='alert'>⏰ Spray is due now or overdue.</div>"
+} else if(diff <= 3){
+dueText = "<div class='alert'>⏰ Next spray due in " + diff + " day(s).</div>"
+} else {
+dueText = "<div class='good'>Next spray due: " + nextDate.toDateString() + "</div>"
+}
+
+document.getElementById("dashboardSpray").innerHTML =
+
+dueText +
+
+"<div class='good'>Last Spray: "+last.date+"</div>"+
+
+"<div><strong>Product:</strong> "+last.product+"</div>"+
+
+"<div><strong>Active Ingredient:</strong> "+last.activeIngredient+"</div>"+
+
+"<div><strong>Group Used:</strong> "+last.group+"</div>"+
+
+"<div><strong>Type:</strong> "+last.sprayType+" / "+last.organicType+"</div>"+
+
+"<div><strong>Mix:</strong> "+last.mixInstructions+"</div>"+
+
+"<div><strong>Recommended Rotation Group:</strong> "+nextGroup+"</div>"+
+
+warning +
+
+soilReminder
+
+document.getElementById("sprayAlert").innerHTML =
+dueText +
+"<div><strong>Recommended next rotation group:</strong> "+nextGroup+"</div>"
+
+}
+
+updateDashboard()
 
 </script>
 
