@@ -2,239 +2,254 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TerraRose Farm Manager</title>
+<title>TerraRose Bloom Manager</title>
 
 <style>
-body{font-family:-apple-system;background:#f7f2f5;margin:0;}
-header{background:#8b1e3f;color:white;padding:18px;text-align:center;font-weight:bold;}
-.container{padding:12px;}
-.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
-.tab{background:#ead7de;border:none;padding:8px 12px;border-radius:18px;font-weight:bold;color:#8b1e3f;}
-.tab.active{background:#8b1e3f;color:white;}
-.card{background:white;padding:14px;border-radius:12px;margin-bottom:12px;box-shadow:0 3px 8px rgba(0,0,0,.08);}
-.view{display:none;}
-.view.active{display:block;}
-input,select{width:100%;padding:8px;margin:4px 0 8px;border-radius:8px;border:1px solid #ddd;}
-button{background:#8b1e3f;color:white;border:none;padding:10px;border-radius:8px;}
-.alert{padding:10px;border-radius:8px;margin-top:8px;}
-.red{background:#ffe6e6;}
+body {
+  font-family: Arial;
+  margin:0;
+  background:#f6f6f6;
+}
+
+header{
+  background:#8b1e3f;
+  color:white;
+  text-align:center;
+  padding:20px;
+  font-size:22px;
+}
+
+.tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  padding:10px;
+}
+
+.tab{
+  padding:10px 14px;
+  border-radius:20px;
+  background:#ead6dc;
+  border:none;
+}
+
+.tab.active{
+  background:#8b1e3f;
+  color:white;
+}
+
+.card{
+  background:white;
+  margin:12px;
+  padding:16px;
+  border-radius:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.alert{
+  padding:10px;
+  border-radius:10px;
+  margin:8px 0;
+  font-weight:bold;
+}
+
+.red{background:#ffe5e5;}
+.yellow{background:#fff4cc;}
 .green{background:#e6ffe6;}
-.yellow{background:#fff7d6;}
+.blue{background:#e6f0ff;}
+
+button{
+  background:#8b1e3f;
+  color:white;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  margin-top:10px;
+}
+
+input,select{
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
 </style>
 </head>
 
 <body>
 
-<header>🌹 TerraRose Farm Manager</header>
-
-<div class="container">
+<header>🌹 TerraRose Bloom Manager</header>
 
 <div class="tabs">
 <button class="tab active" onclick="showTab('dashboard',this)">Dashboard</button>
-<button class="tab" onclick="showTab('sales',this)">Sales</button>
-<button class="tab" onclick="showTab('expenses',this)">Expenses</button>
-<button class="tab" onclick="showTab('labor',this)">Labor</button>
 <button class="tab" onclick="showTab('spray',this)">Spray</button>
 <button class="tab" onclick="showTab('fert',this)">Fertilizer</button>
 <button class="tab" onclick="showTab('soil',this)">Soil</button>
-<button class="tab" onclick="showTab('irrigation',this)">Irrigation</button>
-<button class="tab" onclick="showTab('tax',this)">Tax</button>
+<button class="tab" onclick="showTab('water',this)">Irrigation</button>
+<button class="tab" onclick="showTab('business',this)">Business</button>
 </div>
 
-<div id="dashboard" class="view active">
-<div class="card">
-<h3>Farm Dashboard</h3>
-<div id="dashboardContent"></div>
-</div>
+<!-- DASHBOARD -->
+<div id="dashboard" class="card">
+
+<h2>🚨 Alerts</h2>
+<div id="alerts"></div>
+
+<h2>🌹 Next Spray</h2>
+<div id="nextSpray"></div>
+
+<h2>💰 Business Snapshot</h2>
+<div id="profit"></div>
+
 </div>
 
-<div id="sales" class="view">
-<div class="card">
-<h3>Sales</h3>
-<input type="date" id="saleDate">
-<input placeholder="Customer" id="saleCustomer">
-<input placeholder="Variety" id="saleVariety">
-<input type="number" placeholder="Stems" id="saleStems">
-<input type="number" placeholder="Price" id="salePrice">
-<button onclick="saveSale()">Save</button>
-</div>
-</div>
+<!-- SPRAY -->
+<div id="spray" class="card" style="display:none;">
+<h2>Spray Log</h2>
 
-<div id="expenses" class="view">
-<div class="card">
-<h3>Expenses</h3>
-<input type="date" id="expDate">
-<input placeholder="Vendor" id="expVendor">
+<input id="product" placeholder="Product">
+<input id="ai" placeholder="Active Ingredient">
+<input id="irac" placeholder="IRAC">
+<input id="frac" placeholder="FRAC">
 
-<select id="expCategory">
-<option>Supplies</option>
-<option>Pesticides</option>
-<option>Fertilizer</option>
-<option>Equipment</option>
-<option>Irrigation</option>
-<option>Packaging</option>
-<option>Fuel</option>
-<option>Repairs</option>
-<option>Other</option>
+<select id="group">
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
 </select>
 
-<input type="number" placeholder="Amount" id="expAmount">
-<button onclick="saveExpense()">Save</button>
-</div>
-</div>
-
-<div id="labor" class="view">
-<div class="card">
-<h3>Labor</h3>
-<input type="date" id="laborDate">
-<input placeholder="Worker" id="laborWorker">
-<input type="number" placeholder="Hours" id="laborHours">
-<input type="number" placeholder="Rate" id="laborRate">
-<button onclick="saveLabor()">Save</button>
-</div>
-</div>
-
-<div id="spray" class="view">
-<div class="card">
-<h3>Spray</h3>
-<select id="sprayProduct" onchange="autoFill()">
-<option>Safari</option><option>Spinosad</option><option>Acephate</option>
-<option>Azadirachtin</option><option>Propiconazole</option>
-<option>Chlorothalonil</option><option>Mancozeb</option>
-<option>Copper</option><option>Bacillus subtilis</option>
-</select>
-<input id="sprayAI" placeholder="Active Ingredient">
-<input id="sprayIRAC" placeholder="IRAC">
-<input id="sprayFRAC" placeholder="FRAC">
-<select id="sprayGroup">
-<option value="1">🔴 Group 1</option>
-<option value="2">🟢 Group 2</option>
-<option value="3">🟠 Group 3</option>
-<option value="4">🔵 Group 4</option>
-</select>
 <input type="date" id="sprayDate">
+
 <button onclick="saveSpray()">Save Spray</button>
 </div>
-</div>
 
-<div id="fert" class="view">
-<div class="card">
-<h3>Fertilizer</h3>
-<input type="date" id="fertDate">
-<input placeholder="Product" id="fertProduct">
+<!-- FERTILIZER -->
+<div id="fert" class="card" style="display:none;">
+<h2>Fertilizer</h2>
+
+<input id="fertDate" type="date">
+<input id="fertProduct" placeholder="Product">
+
 <button onclick="saveFert()">Save</button>
 </div>
-</div>
 
-<div id="soil" class="view">
-<div class="card">
-<h3>Soil Test</h3>
+<!-- SOIL -->
+<div id="soil" class="card" style="display:none;">
+<h2>Soil Test</h2>
 
-<label>Date</label>
-<input type="date" id="soilDate">
-
-<input placeholder="pH" id="soilPH">
-<input placeholder="N" id="soilN">
-<input placeholder="P" id="soilP">
-<input placeholder="K" id="soilK">
-<input placeholder="Organic Matter %" id="soilOM">
+<input id="soilDate" type="date">
+<input id="ph" placeholder="pH">
 
 <button onclick="saveSoil()">Save</button>
 </div>
-</div>
 
-<div id="irrigation" class="view">
-<div class="card">
-<h3>Irrigation</h3>
-<input type="date" id="waterDate">
-<input placeholder="Row" id="waterRow">
-<input type="number" placeholder="Row Length ft" id="waterRowLength">
-<input type="number" placeholder="Minutes" id="waterMinutes">
-<input type="number" value="0.4" id="waterFlow">
+<!-- WATER -->
+<div id="water" class="card" style="display:none;">
+<h2>Irrigation</h2>
+
+<input id="minutes" placeholder="Minutes">
+<input id="length" placeholder="Row Length">
+<input id="flow" placeholder="Flow Rate">
+
 <button onclick="calcWater()">Calculate</button>
+
 <div id="waterResult"></div>
-<button onclick="saveWater()">Save</button>
-</div>
 </div>
 
-<div id="tax" class="view">
-<div class="card">
-<h3>Tax Summary</h3>
-<div id="taxSummary"></div>
-</div>
-</div>
+<!-- BUSINESS -->
+<div id="business" class="card" style="display:none;">
+<h2>Business</h2>
 
+<input id="sales" placeholder="Sales">
+<input id="expenses" placeholder="Expenses">
+<input id="labor" placeholder="Labor">
+
+<button onclick="saveBiz()">Save</button>
 </div>
 
 <script>
-let db = JSON.parse(localStorage.getItem("farmDB")||"{}")
-db.sales ||= []; db.expenses ||= []; db.labor ||= []; db.sprays ||= []; db.fert ||= []; db.soil ||= []; db.water ||= [];
 
-function save(){localStorage.setItem("farmDB",JSON.stringify(db));render()}
+let db = JSON.parse(localStorage.getItem("farm")) || {spray:[],fert:[],soil:[],biz:{}};
 
-function showTab(id,btn){
-document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"))
-document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"))
-document.getElementById(id).classList.add("active")
-btn.classList.add("active")
-}
+function showTab(tab,btn){
+document.querySelectorAll('.card').forEach(c=>c.style.display='none');
+document.getElementById(tab).style.display='block';
 
-function saveSale(){
-db.sales.push({total:(saleStems.value*salePrice.value)||0})
-save()
-}
-
-function saveExpense(){
-db.expenses.push({amount:Number(expAmount.value||0)})
-save()
-}
-
-function saveLabor(){
-db.labor.push({pay:(laborHours.value*laborRate.value)||0})
-save()
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+btn.classList.add('active');
 }
 
 function saveSpray(){
-db.sprays.push({})
-save()
+db.spray.unshift({
+product:product.value,
+ai:ai.value,
+irac:irac.value,
+frac:frac.value,
+group:group.value,
+date:sprayDate.value
+});
+save();
 }
 
-function saveFert(){db.fert.push({});save()}
+function saveFert(){
+db.fert.unshift({date:fertDate.value,product:fertProduct.value});
+save();
+}
 
 function saveSoil(){
-db.soil.push({
-date:soilDate.value,
-ph:soilPH.value
-})
-save()
+db.soil.unshift({date:soilDate.value,ph:ph.value});
+save();
+}
+
+function saveBiz(){
+db.biz={
+sales:Number(sales.value),
+expenses:Number(expenses.value),
+labor:Number(labor.value)
+};
+save();
 }
 
 function calcWater(){
-let g=(waterFlow.value/100)*waterRowLength.value*waterMinutes.value
-waterResult.innerHTML="Total Gallons: "+g.toFixed(1)
+let gallons = (flow.value/100)*length.value*minutes.value;
+waterResult.innerHTML = gallons.toFixed(2) + " gallons";
 }
 
-function saveWater(){
-db.water.push({g:(waterFlow.value/100)*waterRowLength.value*waterMinutes.value})
-save()
+function save(){
+localStorage.setItem("farm",JSON.stringify(db));
+render();
 }
 
 function render(){
-let sales=db.sales.reduce((s,x)=>s+x.total,0)
-let exp=db.expenses.reduce((s,x)=>s+x.amount,0)
-let labor=db.labor.reduce((s,x)=>s+x.pay,0)
-let profit=sales-exp-labor
 
-dashboardContent.innerHTML=
-"<div class='green'>Sales: $"+sales.toFixed(0)+"</div>"+
-"<div class='red'>Expenses: $"+exp.toFixed(0)+"</div>"+
-"<div class='yellow'>Labor: $"+labor.toFixed(0)+"</div>"+
-"<div class='green'>Profit: $"+profit.toFixed(0)+"</div>"
+let alertsHTML="";
 
-taxSummary.innerHTML=dashboardContent.innerHTML
+if(db.spray.length){
+let last=db.spray[0];
+alertsHTML += `<div class="yellow">Next spray due soon</div>`;
+
+if(db.spray[1] && db.spray[1].ai===last.ai){
+alertsHTML += `<div class="red">⚠ Same active ingredient repeated</div>`;
+}
 }
 
-render()
+alerts.innerHTML = alertsHTML || "No alerts";
+
+nextSpray.innerHTML = db.spray.length
+? "Group " + ((Number(db.spray[0].group)%4)+1)
+: "No spray yet";
+
+if(db.biz.sales){
+let profit = db.biz.sales - db.biz.expenses - db.biz.labor;
+profit.innerHTML = "Profit: $" + profit;
+}
+
+}
+
+render();
+
 </script>
 
 </body>
