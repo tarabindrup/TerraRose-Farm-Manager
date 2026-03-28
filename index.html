@@ -261,39 +261,10 @@ profit.innerHTML = "Profit: $" + profit;
 
 render();
 
-}
-
-function render(){
-
-let alertsHTML="";
-
-if(db.spray.length){
-let last=db.spray[0];
-alertsHTML += `<div class="yellow">Next spray due soon</div>`;
-
-if(db.spray[1] && db.spray[1].ai===last.ai){
-alertsHTML += `<div class="red">⚠ Same active ingredient repeated</div>`;
-}
-}
-
-alerts.innerHTML = alertsHTML || "No alerts";
-
-nextSpray.innerHTML = db.spray.length
-? "Group " + ((Number(db.spray[0].group)%4)+1)
-: "No spray yet";
-
-if(db.biz.sales){
-let profit = db.biz.sales - db.biz.expenses - db.biz.labor;
-profit.innerHTML = "Profit: $" + profit;
-}
-
-}
-
-render();
-
 </script>
-
 </body>
 </html>
+
+
 
 
