@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TerraRose Bloom Manager V4.2</title>
+
+<style>
+body {font-family: Arial; margin:0; background:#f4f2f4;}
+
+header {
+  background:linear-gradient(135deg,#8b1e3f,#c05a7a);
+  color:white;
+  text-align:center;
+  padding:20px;
+  font-size:20px;
+}
+
+.tabs{display:flex; flex-wrap:wrap; gap:8px; padding:10px;}
+
+.tab{
+  padding:10px 14px;
+  border-radius:20px;
+  background:#ead6dc;
+  border:none;
+  font-weight:bold;
+}
+
+.tab.active{background:#8b1e3f; color:white;}
+
+.card{
+  background:white;
+  margin:14px;
+  padding:22px;
+  border-radius:20px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+}
+
+.alert{
+  padding:14px;
+  border-radius:16px;
+  margin-top:10px;
+  font-weight:bold;
+}
+
+.red{background:#fde9e9;}
+.green{background:#e9f7ef;}
+.yellow{background:#fff6d6;}
+.blue{background:#e9f1ff;}
+
+input,select{
+  width:100%;
+  padding:12px;
+  margin-bottom:10px;
+  border-radius:10px;
+  border:1px solid #ccc;
+}
+
+button{
+  background:#8b1e3f;
+  color:white;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  margin-top:6px;
+  font-weight:bold;
+}
+
+.kpi{
+  font-size:1.8rem;
+  font-weight:900;
+}
+</style>
+</head>
+
+<body>
+
+<header>🌹 TerraRose Bloom Manager V4.2</header>
+
+<div class="tabs">
+<button class="tab active" onclick="showTab('dashboard',this)">Dashboard</button>
+<button class="tab" onclick="showTab('planner',this)">Planner</button>
+<button class="tab" onclick="showTab('spray',this)">Spray</button>
+<button class="tab" onclick="showTab('business',this)">Business</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="card">
+<h2>💰 Overview</h2>
+<div id="kpi"></div>
+
+<h2>🚨 Alerts</h2>
+<div id="alerts"></div>
+
+<h2>🌹 Next Spray</h2>
+<div id="nextSpray"></div>
+</div>
+
+<!-- PLANNER -->
+<div id="planner" class="card" style="display:none;">
+<h2>Settings</h2>
+
+<select id="mode">
+<option value="aggressive">Aggressive</option>
+<option value="conservative">Conservative</option>
+</select>
+
+<select id="thrips">
+<option value="low">Low</option>
+<option value="medium">Medium</option>
+<option value="high">High</option>
+</select>
+
+<input id="interval" type="number" value="7">
+
+<button onclick="saveSettings()">Save</button>
+</div>
+
+<!-- SPRAY -->
+<div id="spray" class="card" style="display:none;">
+<h2>Spray Log</h2>
+
+<select id="product" onchange="autoFill()">
+<option>Safari</option>
+<option>Spinosad</option>
+<option>Acephate</option>
+<option>Azadirachtin</option>
+</select>
+
+<input id="ai">
+<input id="group">
+<input type="date" id="sprayDate">
+
+<button onclick="saveSpray()">Save</button>
+</div>
+
+<!-- BUSINESS -->
+<div id="business" class="card" style="display:none;">
+
+<h3>Sales</h3>
+<input id="saleCustomer" placeholder="Customer / Payee">
+<input id="saleStems" placeholder="# of stems">
+<input id="saleAmount" placeholder="Total price">
+<button onclick="addSale()">Add</button>
+<div id="salesList"></div>
+
+<h3>Expenses</h3>
+<input id="expenseItem">
+<input id="expenseAmount">
+<button onclick="addExpense()">Add</button>
+<div id="expenseList"></div>
+
+<h3>Labor</h3>
+<input id="laborItem">
+<input id="laborAmount">
+<button onclick="addLabor()">Add</button>
+<div id="laborList"></div>
+
+</div>
+
+<script>
+
+let db = JSON.parse(localStorage.getItem("farm42")) || {
+spray:[], sales:[], expenses:[], labor:[],
+settings:{mode:"aggressive",thrips:"high",interval:7}
+};
+
+function save(){
+localStorage.setItem("farm42",JSON.stringify(db));
+render();
+}
+
+function showTab(tab,btn){
+document.querySelectorAll('.card').forEach(c=>c.style.display='none');
+document.getElementById(tab).style.display='block';
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+btn.classList.add('active');
+}
+
+function saveSettings(){
+db.settings.mode=mode.value;
+db.settings.thrips=thrips.value;
+db.settings.interval=Number(interval.value);
+save();
+}
+
+function autoFill(){
+if(product.value==="Safari"){ai.value="Dinotefuran";group.value=1;}
+if(product.value==="Spinosad"){ai.value="Spinosad";group.value=2;}
+if(product.value==="Acephate"){ai.value="Acephate";group.value=3;}
+if(product.value==="Azadirachtin"){ai.value="Azadirachtin";group.value=4;}
+}
+
+function saveSpray(){
+db.spray.unshift({product:product.value,ai:ai.value,group:Number(group.value),date:sprayDate.value});
+save();
+}
+
+function addSale(){
+db.sales.unshift({
+customer:saleCustomer.value,
+stems:Number(saleStems.value),
+amount:Number(saleAmount.value)
+});
+save();
+}
+
+function addExpense(){db.expenses.unshift({item:expenseItem.value,amount:Number(expenseAmount.value)});save();}
+function addLabor(){db.labor.unshift({item:laborItem.value,amount:Number(laborAmount.value)});save();}
+
+function render(){
+
+let sales=0,exp=0,lab=0;
+db.sales.forEach(s=>sales+=s.amount);
+db.expenses.forEach(e=>exp+=e.amount);
+db.labor.forEach(l=>lab+=l.amount);
+
+let profit=sales-exp-lab;
+
+kpi.innerHTML=`<div class="kpi">$${profit}</div>`;
+
+// Alerts
+let alertsHTML="";
+if(db.spray.length){
+let last=new Date(db.spray[0].date);
+let diff=Math.floor((new Date()-last)/(1000*60*60*24));
+
+if(diff>=db.settings.interval){
+alertsHTML+=`<div class="alert red">Spray TODAY</div>`;
+}else{
+alertsHTML+=`<div class="alert green">${db.settings.interval-diff} days until spray</div>`;
+}
+}
+alerts.innerHTML=alertsHTML;
+
+// Recommendation
+let next="Start program";
+if(db.spray.length){
+let g=db.spray[0].group;
+next = g===1?"Spinosad":g===2?"Acephate":g===3?"Azadirachtin":"Safari";
+}
+nextSpray.innerHTML=`<div class="alert blue">${next}</div>`;
+
+// Lists
+salesList.innerHTML=db.sales.map(s=>
+`<div class="alert green">
+${s.customer} — ${s.stems} stems — $${s.amount}
+</div>`).join("");
+
+expenseList.innerHTML=db.expenses.map(e=>`<div class="alert yellow">${e.item}: $${e.amount}</div>`).join("");
+laborList.innerHTML=db.labor.map(l=>`<div class="alert yellow">${l.item}: $${l.amount}</div>`).join("");
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>
