@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TerraRose Bloom Manager</title>
+<meta name="theme-color" content="#8b1e3f">
+<style>
+:root{--rose:#8b1e3f;--rose2:#b64d6b;--soft:#f7eef2;--bg:#f7f2f5;--card:#fff;--line:#eddde4;--text:#2f2930;--muted:#736670;--green:#2e8b57;--greenbg:#e8f7ee;--red:#b42323;--redbg:#fde9e9;--yellow:#8c6b00;--yellowbg:#fff6d6;--blue:#2a6de0;--bluebg:#eaf1ff;--orange:#b85e00;--orangebg:#fff0de;--g1:#c0392b;--g1bg:#fdecea;--g2:#2e8b57;--g2bg:#e8f7ee;--g3:#c26b00;--g3bg:#fff1df;--g4:#2a6de0;--g4bg:#eaf1ff}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}header{background:linear-gradient(135deg,var(--rose),var(--rose2));color:#fff;padding:20px 16px 16px;position:sticky;top:0;z-index:5;box-shadow:0 2px 12px rgba(0,0,0,.12)}header h1{margin:0;font-size:1.4rem}header p{margin:6px 0 0;font-size:.94rem;opacity:.95}.container{max-width:1200px;margin:auto;padding:14px}.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}.tab{border:none;background:#ecd9e1;color:var(--rose);padding:10px 14px;border-radius:999px;font-weight:800;font-size:.94rem}.tab.active{background:var(--rose);color:#fff}.view{display:none}.view.active{display:block}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}.span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-6{grid-column:span 6}.span-4{grid-column:span 4}@media (max-width:900px){.span-8,.span-6,.span-4{grid-column:span 12}}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 4px 12px rgba(0,0,0,.06);margin-bottom:14px}h2,h3{margin:0 0 10px}.subtle{color:var(--muted);font-size:.9rem}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}@media (max-width:850px){.kpis{grid-template-columns:repeat(2,1fr)}}.kpi{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 4px 10px rgba(0,0,0,.04)}.kpi .label{font-size:.86rem;color:var(--muted);margin-bottom:8px}.kpi .value{font-size:1.6rem;font-weight:900}.sales-color{color:var(--green)}.expense-color{color:var(--red)}.labor-color{color:#9b7a00}.profit-color{color:var(--blue)}label{display:block;font-weight:800;margin:12px 0 6px}input,select,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;font-size:16px;background:#fff;color:var(--text)}textarea{min-height:92px;resize:vertical}button{border:none;border-radius:12px;padding:12px 16px;font-weight:800;font-size:15px;background:var(--rose);color:#fff}button.secondary{background:#eddde4;color:var(--rose)}.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.alert{padding:12px;border-radius:14px;margin-top:10px;font-size:.95rem;border:1px solid transparent}.alert.red{background:var(--redbg);color:var(--red)}.alert.green{background:var(--greenbg);color:var(--green)}.alert.yellow{background:var(--yellowbg);color:var(--yellow)}.alert.blue{background:var(--bluebg);color:var(--blue)}.alert.orange{background:var(--orangebg);color:var(--orange)}table{width:100%;border-collapse:collapse}th,td{padding:10px 8px;border-bottom:1px solid #eee;text-align:left;vertical-align:top}th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)}.group-chip{display:inline-block;padding:6px 10px;border-radius:999px;font-size:.82rem;font-weight:900}.g1{background:var(--g1bg);color:var(--g1)}.g2{background:var(--g2bg);color:var(--g2)}.g3{background:var(--g3bg);color:var(--g3)}.g4{background:var(--g4bg);color:var(--g4)}.pill{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--soft);color:var(--rose);font-size:.82rem;font-weight:800;margin:0 6px 6px 0}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media (max-width:750px){.two-col{grid-template-columns:1fr}}.big-next{font-size:1.35rem;font-weight:900;color:var(--rose);margin:4px 0 10px}.list-tight div{margin:6px 0}.footer-space{height:40px}
+</style>
+</head>
+<body>
+<header><h1>🌹 TerraRose Bloom Manager</h1><p>Rose farm spray, fertility, irrigation, records, and profit tracking</p></header>
+<div class="container">
+<div class="tabs">
+<button class="tab active" onclick="showTab('dashboard',this)">Dashboard</button>
+<button class="tab" onclick="showTab('sales',this)">Sales</button>
+<button class="tab" onclick="showTab('expenses',this)">Expenses</button>
+<button class="tab" onclick="showTab('labor',this)">Labor</button>
+<button class="tab" onclick="showTab('spray',this)">Spray Program</button>
+<button class="tab" onclick="showTab('fert',this)">Fertilizer</button>
+<button class="tab" onclick="showTab('soil',this)">Soil</button>
+<button class="tab" onclick="showTab('irrigation',this)">Irrigation</button>
+<button class="tab" onclick="showTab('tax',this)">Tax & Reports</button>
+</div>
+
+<div id="dashboard" class="view active">
+<div class="kpis">
+<div class="kpi"><div class="label">Sales</div><div class="value sales-color" id="kpiSales">$0.00</div></div>
+<div class="kpi"><div class="label">Expenses</div><div class="value expense-color" id="kpiExpenses">$0.00</div></div>
+<div class="kpi"><div class="label">Labor</div><div class="value labor-color" id="kpiLabor">$0.00</div></div>
+<div class="kpi"><div class="label">Net Profit</div><div class="value profit-color" id="kpiProfit">$0.00</div></div>
+</div>
+<div class="grid" style="margin-top:14px">
+<div class="span-6 card"><h3>Next Treatment</h3><div id="nextTreatmentBox"></div></div>
+<div class="span-6 card"><h3>Resistance & Soil Alerts</h3><div id="resistanceBox"></div></div>
+<div class="span-6 card"><h3>Fertilizer Status</h3><div id="fertStatusBox"></div></div>
+<div class="span-6 card"><h3>Water & Soil Snapshot</h3><div id="waterSoilBox"></div></div>
+<div class="span-12 card"><h3>Rotation Guide</h3>
+<div class="list-tight">
+<div><span class="group-chip g1">🔴 Group 1 – Strong Knockdown</span> Safari + Propiconazole / Copper as needed</div>
+<div><span class="group-chip g2">🟢 Group 2 – Organic Reset</span> Spinosad + Neem / Chlorothalonil in disease rotation</div>
+<div><span class="group-chip g3">🟠 Group 3 – Broad Cleanup</span> Acephate + Mancozeb</div>
+<div><span class="group-chip g4">🔵 Group 4 – Maintenance</span> Azadirachtin + Bacillus subtilis</div>
+</div></div></div>
+</div>
+
+<div id="sales" class="view"><div class="grid">
+<div class="span-6 card"><h3>Record Sale</h3><label>Date</label><input type="date" id="saleDate"><label>Customer / Florist</label><input id="saleCustomer"><label>Variety</label><input id="saleVariety"><label>Stems Sold</label><input type="number" id="saleStems"><label>Price Per Stem</label><input type="number" step="0.01" id="salePrice"><button onclick="saveSale()">Save Sale</button></div>
+<div class="span-6 card"><h3>Recent Sales</h3><div id="salesTable"></div></div></div></div>
+
+<div id="expenses" class="view"><div class="grid">
+<div class="span-6 card"><h3>Add Expense</h3><label>Date</label><input type="date" id="expDate"><label>Vendor</label><input id="expVendor"><label>Category</label><select id="expCategory"><option>Supplies</option><option>Pesticides</option><option>Fertilizer</option><option>Equipment</option><option>Irrigation</option><option>Packaging</option><option>Fuel</option><option>Repairs</option><option>Other</option></select><label>Amount</label><input type="number" step="0.01" id="expAmount"><button onclick="saveExpense()">Save Expense</button></div>
+<div class="span-6 card"><h3>Recent Expenses</h3><div id="expensesTable"></div></div></div></div>
+
+<div id="labor" class="view"><div class="grid">
+<div class="span-6 card"><h3>Log Labor</h3><label>Date</label><input type="date" id="laborDate"><label>Worker</label><input id="laborWorker"><label>Hours</label><input type="number" step="0.25" id="laborHours"><label>Hourly Rate</label><input type="number" step="0.01" id="laborRate"><button onclick="saveLabor()">Save Labor</button></div>
+<div class="span-6 card"><h3>Recent Labor</h3><div id="laborTable"></div></div></div></div>
+
+<div id="spray" class="view"><div class="grid">
+<div class="span-6 card"><h3>Log Spray Application</h3><div class="subtle">Choose a product and the app auto-fills active ingredient, IRAC, FRAC, and strategy group. You can override anything.</div><label>Product</label><select id="sprayProduct" onchange="autoFillProduct()"></select>
+<div class="two-col"><div><label>Active Ingredient</label><input id="sprayAI"></div><div><label>Strategy Group</label><select id="sprayGroup"><option value="1">🔴 Group 1</option><option value="2">🟢 Group 2</option><option value="3">🟠 Group 3</option><option value="4">🔵 Group 4</option></select></div></div>
+<div class="two-col"><div><label>IRAC</label><input id="sprayIRAC"></div><div><label>FRAC</label><input id="sprayFRAC"></div></div>
+<div class="two-col"><div><label>Date</label><input type="date" id="sprayDate"></div><div><label>Repeat Interval (days)</label><input type="number" id="sprayInterval" value="7"></div></div>
+<div class="two-col"><div><label>Preventive or Curative</label><select id="sprayType"><option>Preventive</option><option>Curative</option></select></div><div><label>Organic or Inorganic</label><select id="sprayOrganic"><option>Organic</option><option>Inorganic</option></select></div></div>
+<label>Bud Stage</label><select id="sprayBudStage"><option>Vegetative growth</option><option>Tight bud</option><option>Marshmallow stage</option><option>Harvest stage</option><option>Full bloom</option></select>
+<label>Mixing Instructions</label><input id="sprayMix" placeholder="Example: 1–2 oz per 5 gallons">
+<label>Notes</label><textarea id="sprayNotes"></textarea><button onclick="saveSpray()">Save Spray</button></div>
+<div class="span-6 card"><h3>Current Spray Recommendation</h3><div id="sprayRecommendationBox"></div></div>
+<div class="span-12 card"><h3>Recent Spray Log</h3><div id="sprayTable"></div></div></div></div>
+
+<div id="fert" class="view"><div class="grid">
+<div class="span-6 card"><h3>Fertilizer Log</h3><label>Date</label><input type="date" id="fertDate"><label>Product</label><input id="fertProduct"><label>Type</label><select id="fertType"><option>🟢 Nitrogen</option><option>🌸 Bloom</option><option>🟠 Potassium</option><option>🌱 Organic</option></select><label>Method</label><select id="fertMethod"><option>Soil</option><option>Foliar</option><option>Granular</option></select><label>Rate / Mix</label><input id="fertRate"><label>Notes</label><textarea id="fertNotes"></textarea><button onclick="saveFert()">Save Fertilizer</button></div>
+<div class="span-6 card"><h3>Recent Fertilizer Entries</h3><div id="fertTable"></div></div></div></div>
+
+<div id="soil" class="view"><div class="grid">
+<div class="span-6 card"><h3>Soil Test Log</h3><label>Date</label><input type="date" id="soilDate"><label>pH</label><input id="soilPH"><label>N</label><input id="soilN"><label>P</label><input id="soilP"><label>K</label><input id="soilK"><label>Organic Matter %</label><input id="soilOM"><label>Notes / Recommendations</label><textarea id="soilNotes"></textarea><button onclick="saveSoil()">Save Soil Test</button></div>
+<div class="span-6 card"><h3>Recent Soil Tests</h3><div id="soilTable"></div></div></div></div>
+
+<div id="irrigation" class="view"><div class="grid">
+<div class="span-6 card"><h3>Drip Line Calculator</h3><div class="subtle">Uses drip-line flow rate, row length, and minutes run. No emitter math.</div><label>Date</label><input type="date" id="waterDate"><label>Row / Bed Name</label><input id="waterRow"><label>Row Length (feet)</label><input type="number" id="waterRowLength"><label>Minutes Run</label><input type="number" id="waterMinutes"><label>Flow Rate (GPM per 100 ft)</label><input type="number" step="0.01" id="waterFlow" value="0.4"><label>Plants in Row (optional)</label><input type="number" id="waterPlants"><div class="btnrow"><button onclick="calcWater()">Calculate Water</button><button class="secondary" onclick="saveWater()">Save Irrigation</button></div><div id="waterResult"></div></div>
+<div class="span-6 card"><h3>Water Tracking</h3><div id="weeklyWaterBox"></div><div id="waterTable"></div></div></div></div>
+
+<div id="tax" class="view"><div class="grid">
+<div class="span-8 card"><h3>Tax Summary</h3><div id="taxSummary"></div></div>
+<div class="span-4 card"><h3>Export</h3><div class="subtle">Download one CSV for your accountant or spreadsheet.</div><button onclick="exportCSV()">Export CSV</button></div>
+<div class="span-12 card"><h3>Expense Categories</h3><div id="categoryTable"></div></div></div></div>
+<div class="footer-space"></div></div>
+
+<script>
+const KEY="terraroseBloomManagerPro";
+let db=JSON.parse(localStorage.getItem(KEY)||"{}");
+db.sales||=[];db.expenses||=[];db.labor||=[];db.sprays||=[];db.fert||=[];db.soil||=[];db.water||=[];
+const productLibrary={"Safari":{ai:"Dinotefuran",irac:"4A",frac:"",group:"1"},"Spinosad":{ai:"Spinosad",irac:"5",frac:"",group:"2"},"Acephate":{ai:"Acephate",irac:"1B",frac:"",group:"3"},"Azadirachtin":{ai:"Azadirachtin",irac:"UN",frac:"",group:"4"},"Propiconazole":{ai:"Propiconazole",irac:"",frac:"3",group:"1"},"Chlorothalonil":{ai:"Chlorothalonil",irac:"",frac:"M5",group:"2"},"Mancozeb":{ai:"Mancozeb",irac:"",frac:"M3",group:"3"},"Copper":{ai:"Copper",irac:"",frac:"M1",group:"1"},"Bacillus subtilis":{ai:"Bacillus subtilis",irac:"",frac:"BM02",group:"4"}};
+function initProductSelect(){sprayProduct.innerHTML=Object.keys(productLibrary).map(p=>`<option>${p}</option>`).join("")}
+function saveDB(){localStorage.setItem(KEY,JSON.stringify(db));renderAll()}
+function todayStr(){return new Date().toISOString().slice(0,10)}
+function setDefaultDates(){["saleDate","expDate","laborDate","sprayDate","fertDate","soilDate","waterDate"].forEach(id=>{const el=document.getElementById(id);if(el&&!el.value)el.value=todayStr()})}
+function fmtMoney(n){return "$"+Number(n||0).toFixed(2)}
+function showTab(id,btn){document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));document.getElementById(id).classList.add("active");btn.classList.add("active")}
+function autoFillProduct(){const p=sprayProduct.value,item=productLibrary[p];if(!item)return;sprayAI.value=item.ai;sprayIRAC.value=item.irac;sprayFRAC.value=item.frac;sprayGroup.value=item.group}
+function groupChip(group){return `<span class="group-chip g${group}">Group ${group}</span>`}
+function addDays(dateStr,days){const d=new Date(dateStr+"T12:00:00");d.setDate(d.getDate()+Number(days));return d.toISOString().slice(0,10)}
+function daysUntil(dateStr){const t=new Date();t.setHours(0,0,0,0);const d=new Date(dateStr+"T00:00:00");return Math.round((d-t)/86400000)}
+function getSortedSprays(){return [...db.sprays].sort((a,b)=>(b.date||"").localeCompare(a.date||""))}
+function nextGroup(group){let g=Number(group||1)+1;if(g>4)g=1;return g}
+function groupLabel(g){return {1:"🔴 Group 1 – Strong Knockdown",2:"🟢 Group 2 – Organic Reset",3:"🟠 Group 3 – Broad Cleanup",4:"🔵 Group 4 – Maintenance"}[g]||("Group "+g)}
+function recommendedProductsForGroup(g){return Object.keys(productLibrary).filter(k=>productLibrary[k].group==String(g))}
+function getSprayInsights(){const sprays=getSortedSprays();if(!sprays.length)return null;const last=sprays[0],nextDate=addDays(last.date,last.interval||7),dueIn=daysUntil(nextDate),nextG=nextGroup(last.group);let alerts=[];if(sprays[1]){const prev=sprays[1];if(last.ai&&prev.ai&&last.ai===prev.ai)alerts.push({cls:"red",text:`⚠ Same active ingredient used 2 times in a row: ${last.ai}`});if(last.irac&&prev.irac&&last.irac===prev.irac)alerts.push({cls:"red",text:`⚠ Same IRAC repeated: ${last.irac}`});if(last.frac&&prev.frac&&last.frac===prev.frac)alerts.push({cls:"red",text:`⚠ Same FRAC repeated: ${last.frac}`});if(String(last.group)===String(prev.group))alerts.push({cls:"yellow",text:`⚠ Same strategy group repeated: Group ${last.group}`})}const soilTreatmentDate=addDays(last.date,28),soilDue=daysUntil(soilTreatmentDate)<=0;return {last,nextDate,dueIn,nextG,alerts,soilTreatmentDate,soilDue}}
+function saveSale(){db.sales.unshift({date:saleDate.value,customer:saleCustomer.value,variety:saleVariety.value,stems:Number(saleStems.value||0),price:Number(salePrice.value||0),total:Number(saleStems.value||0)*Number(salePrice.value||0)});saveDB()}
+function saveExpense(){db.expenses.unshift({date:expDate.value,vendor:expVendor.value,category:expCategory.value,amount:Number(expAmount.value||0)});saveDB()}
+function saveLabor(){db.labor.unshift({date:laborDate.value,worker:laborWorker.value,hours:Number(laborHours.value||0),rate:Number(laborRate.value||0),pay:Number(laborHours.value||0)*Number(laborRate.value||0)});saveDB()}
+function saveSpray(){db.sprays.unshift({product:sprayProduct.value,ai:sprayAI.value,irac:sprayIRAC.value,frac:sprayFRAC.value,group:Number(sprayGroup.value||1),date:sprayDate.value,mix:sprayMix.value,interval:Number(sprayInterval.value||7),type:sprayType.value,organic:sprayOrganic.value,budStage:sprayBudStage.value,notes:sprayNotes.value});saveDB()}
+function saveFert(){db.fert.unshift({date:fertDate.value,product:fertProduct.value,type:fertType.value,method:fertMethod.value,rate:fertRate.value,notes:fertNotes.value});saveDB()}
+function saveSoil(){db.soil.unshift({date:soilDate.value||todayStr(),ph:soilPH.value,n:soilN.value,p:soilP.value,k:soilK.value,om:soilOM.value,notes:soilNotes.value});saveDB()}
+function calcWaterMath(){const rowFeet=Number(waterRowLength.value||0),mins=Number(waterMinutes.value||0),rate=Number(waterFlow.value||0),plants=Number(waterPlants.value||0),gpmForRow=(rate/100)*rowFeet,totalGallons=gpmForRow*mins,perPlant=plants?totalGallons/plants:0;return {totalGallons,perPlant}}
+function calcWater(){const r=calcWaterMath();let html=`<div class="alert blue"><strong>Total water:</strong> ${r.totalGallons.toFixed(2)} gallons</div>`;if(Number(waterPlants.value||0))html+=`<div class="alert green"><strong>Per plant:</strong> ${r.perPlant.toFixed(2)} gallons</div>`;waterResult.innerHTML=html}
+function saveWater(){const r=calcWaterMath();db.water.unshift({date:waterDate.value,row:waterRow.value,rowFeet:Number(waterRowLength.value||0),minutes:Number(waterMinutes.value||0),totalGallons:r.totalGallons,perPlant:r.perPlant});saveDB()}
+function weeklyWaterTotal(){const today=new Date(),weekAgo=new Date();weekAgo.setDate(today.getDate()-7);return db.water.filter(w=>new Date(w.date)>=weekAgo).reduce((sum,w)=>sum+Number(w.totalGallons||0),0)}
+function renderDashboard(){const sales=db.sales.reduce((s,x)=>s+Number(x.total||0),0),exp=db.expenses.reduce((s,x)=>s+Number(x.amount||0),0),labor=db.labor.reduce((s,x)=>s+Number(x.pay||0),0),profit=sales-exp-labor;kpiSales.textContent=fmtMoney(sales);kpiExpenses.textContent=fmtMoney(exp);kpiLabor.textContent=fmtMoney(labor);kpiProfit.textContent=fmtMoney(profit);const insights=getSprayInsights();if(!insights){nextTreatmentBox.innerHTML=`<div class="alert yellow">No sprays logged yet. Save your first spray to see the next treatment date and recommendation.</div>`;resistanceBox.innerHTML=`<div class="alert blue">No resistance alerts yet.</div>`}else{let dueHtml="";if(insights.dueIn<=0)dueHtml=`<div class="alert red"><strong>Next spray is due now or overdue.</strong></div>`;else if(insights.dueIn<=3)dueHtml=`<div class="alert yellow"><strong>Next spray due in ${insights.dueIn} day(s).</strong></div>`;else dueHtml=`<div class="alert green"><strong>Next spray due:</strong> ${insights.nextDate}</div>`;nextTreatmentBox.innerHTML=`${dueHtml}<div class="big-next">${groupLabel(insights.nextG)}</div><div><strong>Recommended products:</strong> ${recommendedProductsForGroup(insights.nextG).join(", ")}</div><div class="subtle" style="margin-top:10px">Last spray: ${insights.last.product} • ${insights.last.ai} • ${insights.last.date}</div>`;let alerts=insights.alerts.map(a=>`<div class="alert ${a.cls}">${a.text}</div>`).join("");if(insights.soilDue)alerts+=`<div class="alert orange">🌱 Soil treatment due now. Consider beneficial nematodes or azadirachtin drench.</div>`;else alerts+=`<div class="alert green">Next soil treatment target: ${insights.soilTreatmentDate}</div>`;resistanceBox.innerHTML=alerts||`<div class="alert green">No resistance issues detected right now.</div>`}if(!db.fert.length)fertStatusBox.innerHTML=`<div class="alert yellow">No fertilizer logged yet.</div>`;else{const last=db.fert[0],next=addDays(last.date,14),due=daysUntil(next);fertStatusBox.innerHTML=due<=0?`<div class="alert yellow">🌿 Fertilizer may be due now.</div><div class="subtle">Last fertilizer: ${last.product} • ${last.date}</div>`:`<div class="alert green">Next fertilizer check around: ${next}</div><div class="subtle">Last fertilizer: ${last.product} • ${last.date}</div>`}let soilHtml="";if(!db.soil.length)soilHtml+=`<div class="alert yellow">No soil tests logged yet.</div>`;else{const s=db.soil[0];soilHtml+=`<div class="alert green">Latest soil test — pH: ${s.ph||"—"}, N: ${s.n||"—"}, P: ${s.p||"—"}, K: ${s.k||"—"}, OM: ${s.om||"—"}%</div>`;if(Number(s.ph)>7.5)soilHtml+=`<div class="alert yellow">⚠ Soil pH is high. Consider sulfur or acidifier if appropriate.</div>`}soilHtml+=`<div class="alert blue">💧 Weekly water total: ${weeklyWaterTotal().toFixed(2)} gallons</div>`;waterSoilBox.innerHTML=soilHtml}
+function renderSalesTable(){salesTable.innerHTML=`<table><tr><th>Date</th><th>Customer</th><th>Variety</th><th>Stems</th><th>Total</th></tr>${db.sales.length?db.sales.slice(0,15).map(s=>`<tr><td>${s.date||""}</td><td>${s.customer||""}</td><td>${s.variety||""}</td><td>${s.stems||0}</td><td>${fmtMoney(s.total)}</td></tr>`).join(""):`<tr><td colspan="5">No sales yet.</td></tr>`}</table>`}
+function renderExpenseTable(){expensesTable.innerHTML=`<table><tr><th>Date</th><th>Vendor</th><th>Category</th><th>Amount</th></tr>${db.expenses.length?db.expenses.slice(0,15).map(e=>`<tr><td>${e.date||""}</td><td>${e.vendor||""}</td><td>${e.category||""}</td><td>${fmtMoney(e.amount)}</td></tr>`).join(""):`<tr><td colspan="4">No expenses yet.</td></tr>`}</table>`}
+function renderLaborTable(){laborTable.innerHTML=`<table><tr><th>Date</th><th>Worker</th><th>Hours</th><th>Rate</th><th>Pay</th></tr>${db.labor.length?db.labor.slice(0,15).map(l=>`<tr><td>${l.date||""}</td><td>${l.worker||""}</td><td>${l.hours||0}</td><td>${fmtMoney(l.rate)}</td><td>${fmtMoney(l.pay)}</td></tr>`).join(""):`<tr><td colspan="5">No labor yet.</td></tr>`}</table>`}
+function renderSprayView(){const insights=getSprayInsights();sprayRecommendationBox.innerHTML=insights?`<div class="big-next">${groupLabel(insights.nextG)}</div><div><strong>Suggested next products:</strong> ${recommendedProductsForGroup(insights.nextG).join(", ")}</div><div class="subtle" style="margin-top:8px">Last spray: ${insights.last.product} • ${insights.last.ai} • ${insights.last.date}</div>${insights.alerts.map(a=>`<div class="alert ${a.cls}">${a.text}</div>`).join("")}`:`<div class="alert yellow">No sprays logged yet.</div>`;sprayTable.innerHTML=`<table><tr><th>Date</th><th>Product</th><th>AI</th><th>IRAC</th><th>FRAC</th><th>Group</th></tr>${db.sprays.length?db.sprays.slice(0,20).map(s=>`<tr><td>${s.date||""}</td><td>${s.product||""}</td><td>${s.ai||""}</td><td>${s.irac||""}</td><td>${s.frac||""}</td><td>${groupChip(s.group)}</td></tr>`).join(""):`<tr><td colspan="6">No sprays logged yet.</td></tr>`}</table>`}
+function renderFertTable(){fertTable.innerHTML=`<table><tr><th>Date</th><th>Product</th><th>Type</th><th>Method</th></tr>${db.fert.length?db.fert.slice(0,15).map(f=>`<tr><td>${f.date||""}</td><td>${f.product||""}</td><td>${f.type||""}</td><td>${f.method||""}</td></tr>`).join(""):`<tr><td colspan="4">No fertilizer entries yet.</td></tr>`}</table>`}
+function renderSoilTable(){soilTable.innerHTML=`<table><tr><th>Date</th><th>pH</th><th>N</th><th>P</th><th>K</th><th>OM%</th></tr>${db.soil.length?db.soil.slice(0,15).map(s=>`<tr><td>${s.date||""}</td><td>${s.ph||""}</td><td>${s.n||""}</td><td>${s.p||""}</td><td>${s.k||""}</td><td>${s.om||""}</td></tr>`).join(""):`<tr><td colspan="6">No soil tests yet.</td></tr>`}</table>`}
+function renderWaterView(){weeklyWaterBox.innerHTML=`<div class="alert blue">Weekly water total: <strong>${weeklyWaterTotal().toFixed(2)} gallons</strong></div>`;waterTable.innerHTML=`<table><tr><th>Date</th><th>Row</th><th>Length</th><th>Minutes</th><th>Total Gallons</th><th>Per Plant</th></tr>${db.water.length?db.water.slice(0,15).map(w=>`<tr><td>${w.date||""}</td><td>${w.row||""}</td><td>${w.rowFeet||0} ft</td><td>${w.minutes||0}</td><td>${Number(w.totalGallons||0).toFixed(2)}</td><td>${w.perPlant?Number(w.perPlant).toFixed(2):"—"}</td></tr>`).join(""):`<tr><td colspan="6">No irrigation logs yet.</td></tr>`}</table>`}
+function renderTax(){const sales=db.sales.reduce((s,x)=>s+Number(x.total||0),0),exp=db.expenses.reduce((s,x)=>s+Number(x.amount||0),0),labor=db.labor.reduce((s,x)=>s+Number(x.pay||0),0),profit=sales-exp-labor;taxSummary.innerHTML=`<div class="alert green"><strong>Sales:</strong> ${fmtMoney(sales)}</div><div class="alert red"><strong>Expenses:</strong> ${fmtMoney(exp)}</div><div class="alert yellow"><strong>Labor:</strong> ${fmtMoney(labor)}</div><div class="alert blue"><strong>Net Profit:</strong> ${fmtMoney(profit)}</div>`;const cats={};db.expenses.forEach(e=>{cats[e.category||"Other"]=(cats[e.category||"Other"]||0)+Number(e.amount||0)});categoryTable.innerHTML=`<table><tr><th>Category</th><th>Total</th></tr>${Object.keys(cats).length?Object.entries(cats).map(([k,v])=>`<tr><td>${k}</td><td>${fmtMoney(v)}</td></tr>`).join(""):`<tr><td colspan="2">No categorized expenses yet.</td></tr>`}</table>`}
+function exportCSV(){const rows=[["Date","Type","Description","Amount"]];db.sales.forEach(s=>rows.push([s.date,"Sale",`${s.customer||""} • ${s.variety||""} • ${s.stems||0} stems`,s.total]));db.expenses.forEach(e=>rows.push([e.date,"Expense",`${e.category||""} • ${e.vendor||""}`,e.amount]));db.labor.forEach(l=>rows.push([l.date,"Labor",`${l.worker||""} • ${l.hours||0} hrs @ ${l.rate||0}`,l.pay]));const csv=rows.map(r=>r.map(x=>`"${String(x??"").replace(/"/g,'""')}"`).join(",")).join("\n");const blob=new Blob([csv],{type:"text/csv"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="terrarose_bloom_manager_records.csv";a.click();setTimeout(()=>URL.revokeObjectURL(url),500)}
+function renderAll(){setDefaultDates();renderDashboard();renderSalesTable();renderExpenseTable();renderLaborTable();renderSprayView();renderFertTable();renderSoilTable();renderWaterView();renderTax()}
+initProductSelect();setDefaultDates();autoFillProduct();renderAll();
+</script>
+</body>
+</html>
