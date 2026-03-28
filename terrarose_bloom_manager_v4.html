@@ -1,0 +1,795 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TerraRose Bloom Manager V4</title>
+<meta name="theme-color" content="#8b1e3f" />
+<style>
+:root{
+  --rose:#8b1e3f; --rose2:#b24c69; --bg:#f5f3f5; --card:#ffffff; --line:#e8dde2;
+  --text:#2c2730; --muted:#6f6670;
+  --red:#b42323; --redbg:#fde9e9;
+  --yellow:#8a6c00; --yellowbg:#fff6d6;
+  --green:#1f7a46; --greenbg:#e9f7ef;
+  --blue:#275ec9; --bluebg:#e9f1ff;
+  --orange:#b85e00; --orangebg:#fff0df;
+  --g1:#c0392b; --g1bg:#fdecea;
+  --g2:#1f7a46; --g2bg:#e8f7ee;
+  --g3:#c26b00; --g3bg:#fff1df;
+  --g4:#275ec9; --g4bg:#e9f1ff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+header{background:linear-gradient(135deg,var(--rose),var(--rose2));color:#fff;padding:18px 16px 16px;position:sticky;top:0;z-index:5;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+header h1{margin:0;font-size:1.35rem}
+header p{margin:6px 0 0;font-size:.92rem;opacity:.94}
+.container{max-width:1200px;margin:auto;padding:14px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.tab{border:none;background:#ead7de;color:var(--rose);padding:10px 14px;border-radius:999px;font-weight:800}
+.tab.active{background:var(--rose);color:#fff}
+.view{display:none}.view.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-6{grid-column:span 6}.span-4{grid-column:span 4}.span-3{grid-column:span 3}
+@media(max-width:900px){.span-8,.span-6,.span-4,.span-3{grid-column:span 12}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:850px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px}
+.kpi .label{font-size:.85rem;color:var(--muted);margin-bottom:6px}
+.kpi .value{font-size:1.55rem;font-weight:900}
+.sales-color{color:var(--green)} .expense-color{color:var(--red)} .labor-color{color:#9b7a00} .profit-color{color:var(--blue)}
+h2,h3{margin:0 0 10px}
+.subtle{color:var(--muted);font-size:.9rem}
+label{display:block;font-weight:800;margin:12px 0 6px}
+input,select,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #d7d7d7;font-size:16px;background:#fff;color:var(--text)}
+textarea{min-height:90px;resize:vertical}
+button{border:none;border-radius:12px;padding:12px 16px;font-weight:800;font-size:15px;background:var(--rose);color:#fff;cursor:pointer}
+button.secondary{background:#ebdde3;color:var(--rose)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.alert{padding:12px;border-radius:14px;margin-top:10px;font-weight:700}
+.alert.red{background:var(--redbg);color:var(--red)}
+.alert.yellow{background:var(--yellowbg);color:var(--yellow)}
+.alert.green{background:var(--greenbg);color:var(--green)}
+.alert.blue{background:var(--bluebg);color:var(--blue)}
+.alert.orange{background:var(--orangebg);color:var(--orange)}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px 8px;border-bottom:1px solid #eee;text-align:left;vertical-align:top}
+th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)}
+.group-chip{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:900;font-size:.82rem}
+.g1{background:var(--g1bg);color:var(--g1)} .g2{background:var(--g2bg);color:var(--g2)} .g3{background:var(--g3bg);color:var(--g3)} .g4{background:var(--g4bg);color:var(--g4)}
+.pill{display:inline-block;background:#f6edf1;color:var(--rose);padding:6px 10px;border-radius:999px;font-size:.82rem;font-weight:800;margin:0 6px 6px 0}
+.big-next{font-size:1.25rem;font-weight:900;color:var(--rose);margin:4px 0 10px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:720px){.two-col{grid-template-columns:1fr}}
+.footer-space{height:40px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🌹 TerraRose Bloom Manager V4</h1>
+  <p>Smart rose farm planning, tracking, and business management — no coding needed inside the app</p>
+</header>
+
+<div class="container">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('dashboard',this)">Dashboard</button>
+    <button class="tab" onclick="showTab('planner',this)">Planner</button>
+    <button class="tab" onclick="showTab('spray',this)">Spray Log</button>
+    <button class="tab" onclick="showTab('fert',this)">Fertilizer</button>
+    <button class="tab" onclick="showTab('soil',this)">Soil</button>
+    <button class="tab" onclick="showTab('irrigation',this)">Irrigation</button>
+    <button class="tab" onclick="showTab('business',this)">Business</button>
+    <button class="tab" onclick="showTab('tax',this)">Tax & Reports</button>
+  </div>
+
+  <div id="dashboard" class="view active">
+    <div class="kpis">
+      <div class="kpi"><div class="label">Sales</div><div class="value sales-color" id="kpiSales">$0.00</div></div>
+      <div class="kpi"><div class="label">Expenses</div><div class="value expense-color" id="kpiExpenses">$0.00</div></div>
+      <div class="kpi"><div class="label">Labor</div><div class="value labor-color" id="kpiLabor">$0.00</div></div>
+      <div class="kpi"><div class="label">Net Profit</div><div class="value profit-color" id="kpiProfit">$0.00</div></div>
+    </div>
+
+    <div class="grid" style="margin-top:14px">
+      <div class="span-6 card">
+        <h3>Command Center</h3>
+        <div id="commandCenter"></div>
+      </div>
+      <div class="span-6 card">
+        <h3>Next Spray</h3>
+        <div id="nextSprayBox"></div>
+      </div>
+      <div class="span-6 card">
+        <h3>Fertilizer & Soil</h3>
+        <div id="fertSoilBox"></div>
+      </div>
+      <div class="span-6 card">
+        <h3>Water Status</h3>
+        <div id="waterStatusBox"></div>
+      </div>
+      <div class="span-12 card">
+        <h3>Current Strategy Settings</h3>
+        <div id="settingsSummary"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="planner" class="view">
+    <div class="grid">
+      <div class="span-6 card">
+        <h3>Spray Decision Settings</h3>
+        <label>Spray Strategy Mode</label>
+        <select id="settingMode">
+          <option value="aggressive">Aggressive</option>
+          <option value="conservative">Conservative</option>
+        </select>
+
+        <label>Thrips Pressure</label>
+        <select id="settingThrips">
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+
+        <label>Disease Pressure</label>
+        <select id="settingDisease">
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+
+        <label>Spray Interval (days)</label>
+        <input type="number" id="settingInterval" value="7">
+
+        <label>Rotation Style</label>
+        <select id="settingRotationStyle">
+          <option value="strict">Strict</option>
+          <option value="flexible">Flexible</option>
+        </select>
+
+        <button onclick="saveSettings()">Save Settings</button>
+      </div>
+
+      <div class="span-6 card">
+        <h3>How the App Thinks</h3>
+        <div class="subtle">This version lets you control recommendations through settings instead of editing code.</div>
+        <div class="alert blue">Aggressive mode favors faster knockdown and stronger chemistry.</div>
+        <div class="alert green">Conservative mode favors softer rotations and lower resistance pressure.</div>
+        <div class="alert yellow">High thrips pressure pushes recommendations toward stronger insecticides.</div>
+        <div class="alert orange">High disease pressure increases fungicide support in the recommendation.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="spray" class="view">
+    <div class="grid">
+      <div class="span-6 card">
+        <h3>Log Spray Application</h3>
+        <label>Product</label>
+        <select id="sprayProduct" onchange="autoFillProduct()"></select>
+
+        <div class="two-col">
+          <div><label>Active Ingredient</label><input id="sprayAI"></div>
+          <div><label>Strategy Group</label>
+            <select id="sprayGroup">
+              <option value="1">🔴 Group 1</option>
+              <option value="2">🟢 Group 2</option>
+              <option value="3">🟠 Group 3</option>
+              <option value="4">🔵 Group 4</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div><label>IRAC</label><input id="sprayIRAC"></div>
+          <div><label>FRAC</label><input id="sprayFRAC"></div>
+        </div>
+
+        <div class="two-col">
+          <div><label>Date</label><input type="date" id="sprayDate"></div>
+          <div><label>Repeat Interval (days)</label><input type="number" id="sprayInterval"></div>
+        </div>
+
+        <label>Notes</label><textarea id="sprayNotes"></textarea>
+        <button onclick="saveSpray()">Save Spray</button>
+      </div>
+
+      <div class="span-6 card">
+        <h3>Recommendation Preview</h3>
+        <div id="sprayPreview"></div>
+      </div>
+
+      <div class="span-12 card">
+        <h3>Recent Spray Log</h3>
+        <div id="sprayTable"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="fert" class="view">
+    <div class="grid">
+      <div class="span-6 card">
+        <h3>Fertilizer Tracker</h3>
+        <label>Date</label><input type="date" id="fertDate">
+        <label>Product</label><input id="fertProduct">
+        <label>Type</label>
+        <select id="fertType">
+          <option>🟢 Nitrogen</option>
+          <option>🌸 Bloom</option>
+          <option>🟠 Potassium</option>
+          <option>🌱 Organic</option>
+        </select>
+        <label>Method</label>
+        <select id="fertMethod"><option>Soil</option><option>Foliar</option><option>Granular</option></select>
+        <label>Rate / Mix</label><input id="fertRate">
+        <label>Notes</label><textarea id="fertNotes"></textarea>
+        <button onclick="saveFertilizer()">Save Fertilizer</button>
+      </div>
+      <div class="span-6 card">
+        <h3>Recent Fertilizer Entries</h3>
+        <div id="fertTable"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="soil" class="view">
+    <div class="grid">
+      <div class="span-6 card">
+        <h3>Soil Test Log</h3>
+        <label>Date</label><input type="date" id="soilDate">
+        <label>pH</label><input id="soilPH">
+        <label>N</label><input id="soilN">
+        <label>P</label><input id="soilP">
+        <label>K</label><input id="soilK">
+        <label>Organic Matter %</label><input id="soilOM">
+        <label>Notes / Recommendations</label><textarea id="soilNotes"></textarea>
+        <button onclick="saveSoilTest()">Save Soil Test</button>
+      </div>
+      <div class="span-6 card">
+        <h3>Recent Soil Tests</h3>
+        <div id="soilTable"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="irrigation" class="view">
+    <div class="grid">
+      <div class="span-6 card">
+        <h3>Drip-Line Calculator</h3>
+        <label>Date</label><input type="date" id="waterDate">
+        <label>Row / Bed Name</label><input id="waterRow">
+        <label>Row Length (feet)</label><input type="number" id="waterRowLength">
+        <label>Minutes Run</label><input type="number" id="waterMinutes">
+        <label>Flow Rate (GPM per 100 ft)</label><input type="number" step="0.01" id="waterFlow" value="0.4">
+        <label>Plants in Row (optional)</label><input type="number" id="waterPlants">
+        <div class="btnrow">
+          <button onclick="calculateWater()">Calculate Water</button>
+          <button class="secondary" onclick="saveWaterLog()">Save Irrigation</button>
+        </div>
+        <div id="waterResult"></div>
+      </div>
+      <div class="span-6 card">
+        <h3>Weekly Water Tracker</h3>
+        <div id="weeklyWater"></div>
+        <div id="waterTable"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="business" class="view">
+    <div class="grid">
+      <div class="span-4 card">
+        <h3>Itemized Sales</h3>
+        <label>Date</label><input type="date" id="saleDate">
+        <label>Item / Variety</label><input id="saleItem">
+        <label>Amount ($)</label><input type="number" step="0.01" id="saleAmount">
+        <button onclick="addSale()">Add Sale</button>
+        <div id="salesList" style="margin-top:12px"></div>
+      </div>
+
+      <div class="span-4 card">
+        <h3>Itemized Expenses</h3>
+        <label>Date</label><input type="date" id="expenseDate">
+        <label>Category</label>
+        <select id="expenseCategory">
+          <option>Spray / Pesticide</option>
+          <option>Fertilizer</option>
+          <option>Soil / Amendments</option>
+          <option>Irrigation</option>
+          <option>Packaging</option>
+          <option>Fuel</option>
+          <option>Repairs</option>
+          <option>Supplies</option>
+          <option>Other</option>
+        </select>
+        <label>Item</label><input id="expenseItem">
+        <label>Amount ($)</label><input type="number" step="0.01" id="expenseAmount">
+        <button onclick="addExpense()">Add Expense</button>
+        <div id="expenseList" style="margin-top:12px"></div>
+      </div>
+
+      <div class="span-4 card">
+        <h3>Itemized Labor</h3>
+        <label>Date</label><input type="date" id="laborDate">
+        <label>Task / Worker</label><input id="laborItem">
+        <label>Amount ($)</label><input type="number" step="0.01" id="laborAmount">
+        <button onclick="addLabor()">Add Labor</button>
+        <div id="laborList" style="margin-top:12px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tax" class="view">
+    <div class="grid">
+      <div class="span-8 card">
+        <h3>Tax Summary</h3>
+        <div id="taxSummary"></div>
+      </div>
+      <div class="span-4 card">
+        <h3>Export</h3>
+        <div class="subtle">Download a CSV of sales, expenses, and labor.</div>
+        <button onclick="exportCSV()">Export CSV</button>
+      </div>
+      <div class="span-12 card">
+        <h3>Expense Totals by Category</h3>
+        <div id="expenseCategoryTable"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-space"></div>
+</div>
+
+<script>
+const KEY = "terraroseBloomManagerV4";
+let db = JSON.parse(localStorage.getItem(KEY) || "{}");
+db.settings ||= { mode:"aggressive", thrips:"high", disease:"high", interval:7, rotationStyle:"strict" };
+db.sprays ||= [];
+db.fertilizer ||= [];
+db.soil ||= [];
+db.water ||= [];
+db.sales ||= [];
+db.expenses ||= [];
+db.labor ||= [];
+
+const productLibrary = {
+  "Safari": { ai:"Dinotefuran", irac:"4A", frac:"", group:"1" },
+  "Spinosad": { ai:"Spinosad", irac:"5", frac:"", group:"2" },
+  "Acephate": { ai:"Acephate", irac:"1B", frac:"", group:"3" },
+  "Azadirachtin": { ai:"Azadirachtin", irac:"UN", frac:"", group:"4" },
+  "Propiconazole": { ai:"Propiconazole", irac:"", frac:"3", group:"1" },
+  "Chlorothalonil": { ai:"Chlorothalonil", irac:"", frac:"M5", group:"2" },
+  "Mancozeb": { ai:"Mancozeb", irac:"", frac:"M3", group:"3" },
+  "Copper": { ai:"Copper", irac:"", frac:"M1", group:"1" },
+  "Bacillus subtilis": { ai:"Bacillus subtilis", irac:"", frac:"BM02", group:"4" }
+};
+
+function saveDB(){ localStorage.setItem(KEY, JSON.stringify(db)); renderAll(); }
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function setDefaultDates(){
+  ["sprayDate","fertDate","soilDate","waterDate","saleDate","expenseDate","laborDate"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el && !el.value) el.value = todayStr();
+  });
+}
+function money(v){ return "$" + Number(v || 0).toFixed(2); }
+function showTab(id, btn){
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  btn.classList.add("active");
+}
+function initMenus(){
+  sprayProduct.innerHTML = Object.keys(productLibrary).map(p=>`<option>${p}</option>`).join("");
+  settingMode.value = db.settings.mode;
+  settingThrips.value = db.settings.thrips;
+  settingDisease.value = db.settings.disease;
+  settingInterval.value = db.settings.interval;
+  settingRotationStyle.value = db.settings.rotationStyle;
+}
+function autoFillProduct(){
+  const item = productLibrary[sprayProduct.value];
+  if(!item) return;
+  sprayAI.value = item.ai;
+  sprayIRAC.value = item.irac;
+  sprayFRAC.value = item.frac;
+  sprayGroup.value = item.group;
+  sprayInterval.value = db.settings.interval;
+}
+function saveSettings(){
+  db.settings.mode = settingMode.value;
+  db.settings.thrips = settingThrips.value;
+  db.settings.disease = settingDisease.value;
+  db.settings.interval = Number(settingInterval.value || 7);
+  db.settings.rotationStyle = settingRotationStyle.value;
+  saveDB();
+}
+
+function addDays(dateStr, days){
+  const d = new Date(dateStr + "T12:00:00");
+  d.setDate(d.getDate() + Number(days));
+  return d.toISOString().slice(0,10);
+}
+function daysUntil(dateStr){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const d = new Date(dateStr + "T00:00:00");
+  return Math.round((d - today) / 86400000);
+}
+function nextGroup(g){
+  let n = Number(g || 1) + 1;
+  if(n > 4) n = 1;
+  return n;
+}
+function groupLabel(g){
+  return {1:"🔴 Group 1 – Strong Knockdown",2:"🟢 Group 2 – Organic Reset",3:"🟠 Group 3 – Broad Cleanup",4:"🔵 Group 4 – Maintenance"}[g];
+}
+function groupChip(g){ return `<span class="group-chip g${g}">Group ${g}</span>`; }
+function totalAmount(arr){ return arr.reduce((s,x)=>s + Number(x.amount || 0), 0); }
+function weeklyWaterTotal(){
+  const today = new Date();
+  const weekAgo = new Date();
+  weekAgo.setDate(today.getDate() - 7);
+  return db.water.filter(w => new Date(w.date) >= weekAgo).reduce((s,w)=>s + Number(w.totalGallons || 0), 0);
+}
+function getSortedSprays(){ return [...db.sprays].sort((a,b)=>(b.date||"").localeCompare(a.date||"")); }
+
+function saveSpray(){
+  db.sprays.unshift({
+    date:sprayDate.value,
+    product:sprayProduct.value,
+    ai:sprayAI.value,
+    irac:sprayIRAC.value,
+    frac:sprayFRAC.value,
+    group:Number(sprayGroup.value),
+    interval:Number(sprayInterval.value || db.settings.interval),
+    type:"",
+    organic:"",
+    budStage:"",
+    mix:"",
+    notes:sprayNotes.value
+  });
+  saveDB();
+}
+function saveFertilizer(){
+  db.fertilizer.unshift({
+    date:fertDate.value,
+    product:fertProduct.value,
+    type:fertType.value,
+    method:fertMethod.value,
+    rate:fertRate.value,
+    notes:fertNotes.value
+  });
+  saveDB();
+}
+function saveSoilTest(){
+  db.soil.unshift({
+    date:soilDate.value,
+    ph:soilPH.value,
+    n:soilN.value,
+    p:soilP.value,
+    k:soilK.value,
+    om:soilOM.value,
+    notes:soilNotes.value
+  });
+  saveDB();
+}
+function calculateWaterMath(){
+  const rowFeet = Number(waterRowLength.value || 0);
+  const mins = Number(waterMinutes.value || 0);
+  const rate = Number(waterFlow.value || 0);
+  const plants = Number(waterPlants.value || 0);
+  const gpmForRow = (rate / 100) * rowFeet;
+  const totalGallons = gpmForRow * mins;
+  const perPlant = plants ? totalGallons / plants : 0;
+  return { totalGallons, perPlant };
+}
+function calculateWater(){
+  const r = calculateWaterMath();
+  let html = `<div class="alert blue"><strong>Total water:</strong> ${r.totalGallons.toFixed(2)} gallons</div>`;
+  if(Number(waterPlants.value || 0)) html += `<div class="alert green"><strong>Per plant:</strong> ${r.perPlant.toFixed(2)} gallons</div>`;
+  waterResult.innerHTML = html;
+}
+function saveWaterLog(){
+  const r = calculateWaterMath();
+  db.water.unshift({
+    date:waterDate.value,
+    row:waterRow.value,
+    rowFeet:Number(waterRowLength.value || 0),
+    minutes:Number(waterMinutes.value || 0),
+    totalGallons:r.totalGallons,
+    perPlant:r.perPlant
+  });
+  saveDB();
+}
+function addSale(){
+  db.sales.unshift({ date:saleDate.value, item:saleItem.value, amount:Number(saleAmount.value || 0) });
+  saveDB();
+}
+function addExpense(){
+  db.expenses.unshift({ date:expenseDate.value, category:expenseCategory.value, item:expenseItem.value, amount:Number(expenseAmount.value || 0) });
+  saveDB();
+}
+function addLabor(){
+  db.labor.unshift({ date:laborDate.value, item:laborItem.value, amount:Number(laborAmount.value || 0) });
+  saveDB();
+}
+
+function getRecommendation(){
+  const sprays = getSortedSprays();
+  const s = db.settings;
+  const last = sprays[0] || null;
+  const nextG = last ? nextGroup(last.group) : 1;
+
+  let insect = "";
+  let disease = "";
+  let reason = [];
+
+  if(s.mode === "aggressive"){
+    if(s.thrips === "high"){
+      insect = nextG === 1 ? "Safari" : nextG === 2 ? "Spinosad" : nextG === 3 ? "Acephate" : "Azadirachtin";
+      reason.push("high thrips pressure");
+    } else if(s.thrips === "medium"){
+      insect = nextG === 1 ? "Safari" : nextG === 2 ? "Spinosad" : nextG === 3 ? "Azadirachtin" : "Azadirachtin";
+      reason.push("moderate thrips pressure");
+    } else {
+      insect = nextG === 2 ? "Spinosad" : "Azadirachtin";
+      reason.push("lower insect pressure");
+    }
+
+    if(s.disease === "high"){
+      disease = nextG === 1 ? "Propiconazole" : nextG === 2 ? "Chlorothalonil" : nextG === 3 ? "Mancozeb" : "Bacillus subtilis";
+      reason.push("high disease pressure");
+    } else if(s.disease === "medium"){
+      disease = nextG === 2 ? "Chlorothalonil" : nextG === 3 ? "Mancozeb" : "Bacillus subtilis";
+      reason.push("moderate disease pressure");
+    } else {
+      disease = "Bacillus subtilis";
+      reason.push("lower disease pressure");
+    }
+  } else {
+    if(s.thrips === "high"){
+      insect = nextG === 2 ? "Spinosad" : "Azadirachtin";
+      reason.push("conservative mode with insect focus");
+    } else {
+      insect = "Azadirachtin";
+      reason.push("softer rotation");
+    }
+
+    if(s.disease === "high"){
+      disease = "Copper";
+      reason.push("disease support needed");
+    } else {
+      disease = "Bacillus subtilis";
+      reason.push("biofungicide support");
+    }
+  }
+
+  let dueText = "Log a spray to start timing.";
+  if(last){
+    const nextDate = addDays(last.date, last.interval || s.interval);
+    const dueIn = daysUntil(nextDate);
+    if(dueIn <= 0) dueText = "Apply now or overdue.";
+    else dueText = `Apply in ${dueIn} day(s).`;
+  }
+
+  return {
+    nextGroup: nextG,
+    productText: disease ? `${insect} + ${disease}` : insect,
+    reasonText: reason.join(" + "),
+    dueText
+  };
+}
+
+function renderDashboard(){
+  const salesTotal = totalAmount(db.sales);
+  const expenseTotal = totalAmount(db.expenses);
+  const laborTotal = totalAmount(db.labor);
+  const profitTotal = salesTotal - expenseTotal - laborTotal;
+
+  kpiSales.textContent = money(salesTotal);
+  kpiExpenses.textContent = money(expenseTotal);
+  kpiLabor.textContent = money(laborTotal);
+  kpiProfit.textContent = money(profitTotal);
+
+  const sprays = getSortedSprays();
+  let html = `<div class="alert blue"><strong>Mode:</strong> ${db.settings.mode.toUpperCase()}</div>`;
+  html += `<div class="alert blue"><strong>Thrips:</strong> ${db.settings.thrips.toUpperCase()} • <strong>Disease:</strong> ${db.settings.disease.toUpperCase()}</div>`;
+
+  if(!sprays.length){
+    html += `<div class="alert red">No sprays logged yet.</div>`;
+  } else {
+    const last = sprays[0];
+    const dueDate = addDays(last.date, last.interval || db.settings.interval);
+    const dueIn = daysUntil(dueDate);
+    if(dueIn <= 0) html += `<div class="alert red">⏰ Spray due now or overdue.</div>`;
+    else if(dueIn <= 3) html += `<div class="alert yellow">⏰ Next spray due in ${dueIn} day(s).</div>`;
+    else html += `<div class="alert green">Next spray due: ${dueDate}</div>`;
+
+    if(sprays[1] && sprays[1].ai === sprays[0].ai) html += `<div class="alert red">⚠ Same active ingredient used twice in a row: ${sprays[0].ai}</div>`;
+    if(sprays[1] && sprays[1].irac && sprays[1].irac === sprays[0].irac) html += `<div class="alert red">⚠ Same IRAC repeated: ${sprays[0].irac}</div>`;
+    if(sprays[1] && sprays[1].frac && sprays[1].frac === sprays[0].frac) html += `<div class="alert red">⚠ Same FRAC repeated: ${sprays[0].frac}</div>`;
+
+    const soilDueDate = addDays(last.date, 28);
+    const soilDue = daysUntil(soilDueDate) <= 0;
+    html += soilDue
+      ? `<div class="alert orange">🌱 Soil treatment due now.</div>`
+      : `<div class="alert green">Next soil treatment target: ${soilDueDate}</div>`;
+  }
+  commandCenter.innerHTML = html;
+
+  const rec = getRecommendation();
+  nextSprayBox.innerHTML = `
+    <div class="big-next">${rec.productText}</div>
+    <div class="pill">${groupLabel(rec.nextGroup)}</div>
+    <div class="alert blue">${rec.dueText}</div>
+    <div class="subtle">Reason: ${rec.reasonText}</div>
+  `;
+
+  let fertSoil = "";
+  if(!db.fertilizer.length){
+    fertSoil += `<div class="alert yellow">No fertilizer logged yet.</div>`;
+  } else {
+    const f = db.fertilizer[0];
+    const nextCheck = addDays(f.date, 14);
+    const due = daysUntil(nextCheck);
+    fertSoil += due <= 0 ? `<div class="alert yellow">🌿 Fertilizer may be due now.</div>` : `<div class="alert green">Next fertilizer check around: ${nextCheck}</div>`;
+    fertSoil += `<div class="subtle">Last fertilizer: ${f.product} • ${f.date}</div>`;
+  }
+  if(!db.soil.length){
+    fertSoil += `<div class="alert yellow">No soil tests logged yet.</div>`;
+  } else {
+    const s = db.soil[0];
+    fertSoil += `<div class="alert green">Latest soil test — pH: ${s.ph || "—"}, N: ${s.n || "—"}, P: ${s.p || "—"}, K: ${s.k || "—"}, OM: ${s.om || "—"}%</div>`;
+    if(Number(s.ph) > 7.5) fertSoil += `<div class="alert yellow">⚠ Soil pH is high. Consider sulfur or acidifier if appropriate.</div>`;
+  }
+  fertSoilBox.innerHTML = fertSoil;
+
+  waterStatusBox.innerHTML = `<div class="alert blue">Weekly water total: <strong>${weeklyWaterTotal().toFixed(2)} gallons</strong></div>`;
+
+  settingsSummary.innerHTML = `
+    <span class="pill">Mode: ${db.settings.mode}</span>
+    <span class="pill">Thrips: ${db.settings.thrips}</span>
+    <span class="pill">Disease: ${db.settings.disease}</span>
+    <span class="pill">Interval: ${db.settings.interval} days</span>
+    <span class="pill">Rotation: ${db.settings.rotationStyle}</span>
+  `;
+}
+
+function renderSpray(){
+  const rec = getRecommendation();
+  sprayPreview.innerHTML = `
+    <div class="alert blue"><strong>Mode:</strong> ${db.settings.mode.toUpperCase()}</div>
+    <div class="big-next">${rec.productText}</div>
+    <div class="pill">${groupLabel(rec.nextGroup)}</div>
+    <div class="subtle">Reason: ${rec.reasonText}</div>
+  `;
+
+  const sprays = getSortedSprays();
+  sprayTable.innerHTML = `
+    <table>
+      <tr><th>Date</th><th>Product</th><th>AI</th><th>IRAC</th><th>FRAC</th><th>Group</th></tr>
+      ${
+        sprays.length
+          ? sprays.slice(0,20).map(s => `<tr>
+              <td>${s.date || ""}</td>
+              <td>${s.product || ""}</td>
+              <td>${s.ai || ""}</td>
+              <td>${s.irac || ""}</td>
+              <td>${s.frac || ""}</td>
+              <td>${groupChip(s.group)}</td>
+            </tr>`).join("")
+          : `<tr><td colspan="6">No sprays logged yet.</td></tr>`
+      }
+    </table>
+  `;
+}
+
+function renderFertilizer(){
+  fertTable.innerHTML = `
+    <table>
+      <tr><th>Date</th><th>Product</th><th>Type</th><th>Method</th></tr>
+      ${
+        db.fertilizer.length
+          ? db.fertilizer.slice(0,15).map(f => `<tr><td>${f.date}</td><td>${f.product}</td><td>${f.type}</td><td>${f.method}</td></tr>`).join("")
+          : `<tr><td colspan="4">No fertilizer entries yet.</td></tr>`
+      }
+    </table>
+  `;
+}
+function renderSoil(){
+  soilTable.innerHTML = `
+    <table>
+      <tr><th>Date</th><th>pH</th><th>N</th><th>P</th><th>K</th><th>OM%</th></tr>
+      ${
+        db.soil.length
+          ? db.soil.slice(0,15).map(s => `<tr><td>${s.date}</td><td>${s.ph || ""}</td><td>${s.n || ""}</td><td>${s.p || ""}</td><td>${s.k || ""}</td><td>${s.om || ""}</td></tr>`).join("")
+          : `<tr><td colspan="6">No soil tests yet.</td></tr>`
+      }
+    </table>
+  `;
+}
+function renderWater(){
+  weeklyWater.innerHTML = `<div class="alert blue">Weekly water total: <strong>${weeklyWaterTotal().toFixed(2)} gallons</strong></div>`;
+  waterTable.innerHTML = `
+    <table>
+      <tr><th>Date</th><th>Row</th><th>Length</th><th>Minutes</th><th>Total Gallons</th><th>Per Plant</th></tr>
+      ${
+        db.water.length
+          ? db.water.slice(0,15).map(w => `<tr><td>${w.date}</td><td>${w.row || ""}</td><td>${w.rowFeet || 0} ft</td><td>${w.minutes || 0}</td><td>${Number(w.totalGallons || 0).toFixed(2)}</td><td>${w.perPlant ? Number(w.perPlant).toFixed(2) : "—"}</td></tr>`).join("")
+          : `<tr><td colspan="6">No irrigation logs yet.</td></tr>`
+      }
+    </table>
+  `;
+}
+function renderBusiness(){
+  salesList.innerHTML = db.sales.length
+    ? db.sales.slice(0,20).map(s => `<div class="alert green">${s.date} — ${s.item}: ${money(s.amount)}</div>`).join("")
+    : `<div class="alert yellow">No sales entered yet.</div>`;
+
+  expenseList.innerHTML = db.expenses.length
+    ? db.expenses.slice(0,20).map(e => `<div class="alert yellow">${e.date} — ${e.category}: ${e.item} — ${money(e.amount)}</div>`).join("")
+    : `<div class="alert yellow">No expenses entered yet.</div>`;
+
+  laborList.innerHTML = db.labor.length
+    ? db.labor.slice(0,20).map(l => `<div class="alert yellow">${l.date} — ${l.item}: ${money(l.amount)}</div>`).join("")
+    : `<div class="alert yellow">No labor entered yet.</div>`;
+}
+function renderTax(){
+  const salesTotal = totalAmount(db.sales);
+  const expenseTotal = totalAmount(db.expenses);
+  const laborTotal = totalAmount(db.labor);
+  const profitTotal = salesTotal - expenseTotal - laborTotal;
+  taxSummary.innerHTML = `
+    <div class="alert green"><strong>Sales:</strong> ${money(salesTotal)}</div>
+    <div class="alert yellow"><strong>Expenses:</strong> ${money(expenseTotal)}</div>
+    <div class="alert yellow"><strong>Labor:</strong> ${money(laborTotal)}</div>
+    <div class="alert blue"><strong>Net Profit:</strong> ${money(profitTotal)}</div>
+  `;
+
+  const cats = {};
+  db.expenses.forEach(e => { cats[e.category] = (cats[e.category] || 0) + Number(e.amount || 0); });
+  expenseCategoryTable.innerHTML = `
+    <table>
+      <tr><th>Category</th><th>Total</th></tr>
+      ${
+        Object.keys(cats).length
+          ? Object.entries(cats).map(([k,v]) => `<tr><td>${k}</td><td>${money(v)}</td></tr>`).join("")
+          : `<tr><td colspan="2">No expense categories yet.</td></tr>`
+      }
+    </table>
+  `;
+}
+function exportCSV(){
+  const rows = [["Date","Type","Category/Item","Amount"]];
+  db.sales.forEach(s => rows.push([s.date,"Sale",s.item,s.amount]));
+  db.expenses.forEach(e => rows.push([e.date,"Expense",`${e.category} - ${e.item}`,e.amount]));
+  db.labor.forEach(l => rows.push([l.date,"Labor",l.item,l.amount]));
+  const csv = rows.map(r => r.map(x => `"${String(x ?? "").replace(/"/g,'""')}"`).join(",")).join("\n");
+  const blob = new Blob([csv], {type:"text/csv"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "terrarose_bloom_manager_v4.csv";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 500);
+}
+
+function renderAll(){
+  setDefaultDates();
+  renderDashboard();
+  renderSpray();
+  renderFertilizer();
+  renderSoil();
+  renderWater();
+  renderBusiness();
+  renderTax();
+}
+initMenus();
+setDefaultDates();
+autoFillProduct();
+renderAll();
+</script>
+</body>
+</html>
