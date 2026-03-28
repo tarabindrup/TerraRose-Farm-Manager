@@ -1,0 +1,272 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TerraRose Bloom Manager V5</title>
+
+<style>
+body {font-family:-apple-system, Arial; margin:0; background:#f4f2f4;}
+
+header {
+  background:linear-gradient(135deg,#8b1e3f,#c05a7a);
+  color:white;
+  text-align:center;
+  padding:22px;
+  font-size:22px;
+  font-weight:700;
+}
+
+.tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  padding:10px;
+}
+
+.tab{
+  padding:10px 16px;
+  border-radius:30px;
+  background:#eee;
+  border:none;
+  font-weight:600;
+}
+
+.tab.active{
+  background:#8b1e3f;
+  color:white;
+}
+
+.card{
+  background:white;
+  margin:14px;
+  padding:22px;
+  border-radius:22px;
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+h2{margin-bottom:12px;}
+h3{margin-bottom:10px;}
+
+.alert{
+  padding:14px;
+  border-radius:14px;
+  margin-top:10px;
+  font-weight:600;
+}
+
+.red{background:#fde9e9;}
+.green{background:#e9f7ef;}
+.yellow{background:#fff6d6;}
+.blue{background:#e9f1ff;}
+
+input,select{
+  width:100%;
+  padding:12px;
+  margin-bottom:10px;
+  border-radius:12px;
+  border:1px solid #ddd;
+}
+
+button{
+  background:#8b1e3f;
+  color:white;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  font-weight:700;
+}
+
+.kpi-big{
+  font-size:2.2rem;
+  font-weight:900;
+}
+
+.kpi-row{
+  display:flex;
+  justify-content:space-between;
+  margin-top:6px;
+}
+</style>
+</head>
+
+<body>
+
+<header>🌹 TerraRose Bloom Manager V5</header>
+
+<div class="tabs">
+<button class="tab active" onclick="showTab('dashboard',this)">Dashboard</button>
+<button class="tab" onclick="showTab('planner',this)">Planner</button>
+<button class="tab" onclick="showTab('spray',this)">Spray</button>
+<button class="tab" onclick="showTab('business',this)">Business</button>
+</div>
+
+<div id="dashboard" class="card">
+<h2>💰 Profit Center</h2>
+<div id="kpi"></div>
+
+<h2>🚨 Alerts</h2>
+<div id="alerts"></div>
+
+<h2>🌹 Next Spray</h2>
+<div id="nextSpray"></div>
+</div>
+
+<div id="planner" class="card" style="display:none;">
+<h2>⚙️ Smart Controls</h2>
+
+<label>Mode</label>
+<select id="mode">
+<option value="aggressive">Aggressive</option>
+<option value="conservative">Conservative</option>
+</select>
+
+<label>Thrips Pressure</label>
+<select id="thrips">
+<option value="low">Low</option>
+<option value="medium">Medium</option>
+<option value="high">High</option>
+</select>
+
+<label>Disease Pressure</label>
+<select id="disease">
+<option value="low">Low</option>
+<option value="medium">Medium</option>
+<option value="high">High</option>
+</select>
+
+<label>Spray Interval</label>
+<input id="interval" type="number" value="7">
+
+<button onclick="saveSettings()">Save</button>
+</div>
+
+<div id="spray" class="card" style="display:none;">
+<h2>🌹 Spray Log</h2>
+<input id="product" placeholder="Product">
+<input id="ai" placeholder="Active Ingredient">
+<input id="group" placeholder="Group (1-4)">
+<input type="date" id="sprayDate">
+<button onclick="saveSpray()">Save Spray</button>
+</div>
+
+<div id="business" class="card" style="display:none;">
+<h3>Sales</h3>
+<input id="saleItem" placeholder="Item">
+<input id="saleAmount" placeholder="Amount">
+<button onclick="addSale()">Add</button>
+<div id="salesList"></div>
+
+<h3>Expenses</h3>
+<input id="expenseItem" placeholder="Item">
+<input id="expenseAmount" placeholder="Amount">
+<button onclick="addExpense()">Add</button>
+<div id="expenseList"></div>
+
+<h3>Labor</h3>
+<input id="laborItem" placeholder="Task">
+<input id="laborAmount" placeholder="Amount">
+<button onclick="addLabor()">Add</button>
+<div id="laborList"></div>
+</div>
+
+<script>
+
+let db = JSON.parse(localStorage.getItem("farmV5")) || {
+spray:[], sales:[], expenses:[], labor:[],
+settings:{mode:"aggressive",thrips:"high",disease:"high",interval:7}
+};
+
+function save(){
+localStorage.setItem("farmV5",JSON.stringify(db));
+render();
+}
+
+function showTab(tab,btn){
+document.querySelectorAll('.card').forEach(c=>c.style.display='none');
+document.getElementById(tab).style.display='block';
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+btn.classList.add('active');
+}
+
+function saveSettings(){
+db.settings.mode=mode.value;
+db.settings.thrips=thrips.value;
+db.settings.disease=disease.value;
+db.settings.interval=Number(interval.value);
+save();
+}
+
+function saveSpray(){
+db.spray.unshift({product:product.value,ai:ai.value,group:Number(group.value),date:sprayDate.value});
+save();
+}
+
+function addSale(){db.sales.unshift({item:saleItem.value,amount:Number(saleAmount.value)});save();}
+function addExpense(){db.expenses.unshift({item:expenseItem.value,amount:Number(expenseAmount.value)});save();}
+function addLabor(){db.labor.unshift({item:laborItem.value,amount:Number(laborAmount.value)});save();}
+
+function render(){
+
+let sales=0,exp=0,lab=0;
+db.sales.forEach(s=>sales+=s.amount);
+db.expenses.forEach(e=>exp+=e.amount);
+db.labor.forEach(l=>lab+=l.amount);
+
+let profit=sales-exp-lab;
+
+kpi.innerHTML=`
+<div class="kpi-big">$${profit}</div>
+<div class="kpi-row"><span>Sales</span><span>$${sales}</span></div>
+<div class="kpi-row"><span>Expenses</span><span>$${exp}</span></div>
+<div class="kpi-row"><span>Labor</span><span>$${lab}</span></div>
+`;
+
+let alertsHTML="";
+if(db.spray.length){
+let last=new Date(db.spray[0].date);
+let diff=Math.floor((new Date()-last)/(1000*60*60*24));
+
+if(diff>=db.settings.interval){
+alertsHTML+=`<div class="alert red">⏰ Spray TODAY</div>`;
+}else{
+alertsHTML+=`<div class="alert green">${db.settings.interval-diff} days until next spray</div>`;
+}
+
+if(db.spray[1] && db.spray[1].ai===db.spray[0].ai){
+alertsHTML+=`<div class="alert red">⚠ Same AI repeated</div>`;
+}
+}else{
+alertsHTML+=`<div class="alert red">No spray logged</div>`;
+}
+
+alerts.innerHTML=alertsHTML;
+
+let next="Start program";
+
+if(db.spray.length){
+let g=db.spray[0].group;
+
+if(db.settings.thrips==="high"){
+next = g===1?"Spinosad":g===2?"Acephate":g===3?"Azadirachtin":"Safari";
+}else if(db.settings.thrips==="medium"){
+next = g===1?"Spinosad":"Azadirachtin";
+}else{
+next = "Azadirachtin";
+}
+}
+
+nextSpray.innerHTML=`<div class="alert blue"><strong>${next}</strong><br>Smart recommendation based on your settings</div>`;
+
+salesList.innerHTML=db.sales.map(s=>`<div class="alert green">${s.item}: $${s.amount}</div>`).join("");
+expenseList.innerHTML=db.expenses.map(e=>`<div class="alert yellow">${e.item}: $${e.amount}</div>`).join("");
+laborList.innerHTML=db.labor.map(l=>`<div class="alert yellow">${l.item}: $${l.amount}</div>`).join("");
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>
