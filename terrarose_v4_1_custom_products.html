@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TerraRose Bloom Manager V4.1+ Custom</title>
+
+<style>
+body {font-family: Arial; margin:0; background:#f4f2f4;}
+header {background:#8b1e3f; color:white; text-align:center; padding:20px;}
+.tabs{display:flex; gap:8px; padding:10px;}
+.tab{padding:10px 14px; border-radius:20px; background:#ead6dc; border:none;}
+.tab.active{background:#8b1e3f; color:white;}
+.card{background:white; margin:14px; padding:20px; border-radius:20px;}
+input,select{width:100%; padding:10px; margin-bottom:10px;}
+button{background:#8b1e3f; color:white; padding:10px; border:none;}
+.alert{padding:10px; border-radius:10px; margin-top:10px;}
+</style>
+</head>
+
+<body>
+
+<header>🌹 TerraRose V4.1 + Custom Products</header>
+
+<div class="card">
+<h2>Spray</h2>
+
+<select id="product" onchange="fillProduct()"></select>
+
+<input id="ai" placeholder="Active Ingredient">
+<input id="group" placeholder="Group">
+<input id="irac" placeholder="IRAC">
+<input id="frac" placeholder="FRAC">
+
+<h3>Add Custom Product</h3>
+<input id="newName" placeholder="Product Name">
+<input id="newAI" placeholder="AI">
+<input id="newGroup" placeholder="Group">
+<input id="newIRAC" placeholder="IRAC">
+<input id="newFRAC" placeholder="FRAC">
+
+<button onclick="addProduct()">Save Product</button>
+
+</div>
+
+<script>
+
+let db = JSON.parse(localStorage.getItem("farmCustomV41")) || {
+products:[
+{name:"Safari",ai:"Dinotefuran",group:"🔴 Group 1 – Strong Knockdown",irac:"4A",frac:""},
+{name:"Spinosad",ai:"Spinosad",group:"🟢 Group 2 – Organic / Softer",irac:"5",frac:""}
+]
+};
+
+function save(){
+localStorage.setItem("farmCustomV41",JSON.stringify(db));
+render();
+}
+
+function render(){
+product.innerHTML = db.products.map((p,i)=>`<option value="${i}">${p.name}</option>`).join("");
+}
+
+function fillProduct(){
+let p=db.products[product.value];
+ai.value=p.ai;
+group.value=p.group;
+irac.value=p.irac;
+frac.value=p.frac;
+}
+
+function addProduct(){
+db.products.push({
+name:newName.value,
+ai:newAI.value,
+group:newGroup.value,
+irac:newIRAC.value,
+frac:newFRAC.value
+});
+save();
+}
+
+render();
+
+</script>
+
+</body>
+</html>
