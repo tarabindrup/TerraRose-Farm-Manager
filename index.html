@@ -250,7 +250,91 @@ profit.innerHTML = "Profit: $" + profit;
 
 render();
 
+
+
+
+let db = JSON.parse(localStorage.getItem("farm")) || {spray:[],fert:[],soil:[],biz:{}};
+
+function showTab(tab,btn){
+document.querySelectorAll('.card').forEach(c=>c.style.display='none');
+document.getElementById(tab).style.display='block';
+
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+btn.classList.add('active');
+}
+
+function saveSpray(){
+db.spray.unshift({
+product:product.value,
+ai:ai.value,
+irac:irac.value,
+frac:frac.value,
+group:group.value,
+date:sprayDate.value
+});
+save();
+}
+
+function saveFert(){
+db.fert.unshift({date:fertDate.value,product:fertProduct.value});
+save();
+}
+
+function saveSoil(){
+db.soil.unshift({date:soilDate.value,ph:ph.value});
+save();
+}
+
+function saveBiz(){
+db.biz={
+sales:Number(sales.value),
+expenses:Number(expenses.value),
+labor:Number(labor.value)
+};
+save();
+}
+
+function calcWater(){
+let gallons = (flow.value/100)*length.value*minutes.value;
+waterResult.innerHTML = gallons.toFixed(2) + " gallons";
+}
+
+function save(){
+localStorage.setItem("farm",JSON.stringify(db));
+render();
+}
+
+function render(){
+
+let alertsHTML="";
+
+if(db.spray.length){
+let last=db.spray[0];
+alertsHTML += `<div class="yellow">Next spray due soon</div>`;
+
+if(db.spray[1] && db.spray[1].ai===last.ai){
+alertsHTML += `<div class="red">⚠ Same active ingredient repeated</div>`;
+}
+}
+
+alerts.innerHTML = alertsHTML || "No alerts";
+
+nextSpray.innerHTML = db.spray.length
+? "Group " + ((Number(db.spray[0].group)%4)+1)
+: "No spray yet";
+
+if(db.biz.sales){
+let profit = db.biz.sales - db.biz.expenses - db.biz.labor;
+profit.innerHTML = "Profit: $" + profit;
+}
+
+}
+
+render();
+
 </script>
 
 </body>
 </html>
+
+
