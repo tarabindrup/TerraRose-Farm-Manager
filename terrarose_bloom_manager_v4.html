@@ -704,14 +704,19 @@ function renderSpray(){
       <tr><th>Date</th><th>Product</th><th>AI</th><th>IRAC</th><th>FRAC</th><th>Group</th></tr>
       ${
         sprays.length
-          ? sprays.slice(0,20).map(s => `<tr>
+          ? sprays.slice(0,20).map((s,i) => `<tr>
               <td>${s.date || ""}</td>
               <td>${s.product || ""}</td>
               <td>${s.ai || ""}</td>
               <td>${s.irac || ""}</td>
               <td>${s.frac || ""}</td>
-              <td>${groupChip(s.group)}</td>
-            </tr>`).join("")
+             <td>
+  ${groupChip(s.group)}
+  <br>
+  <button onclick="editSpray(${i})">✏️</button>
+  <button onclick="deleteSpray(${i})">🗑</button>
+</td>
+</tr>`).join("")
           : `<tr><td colspan="6">No sprays logged yet.</td></tr>`
       }
     </table>
@@ -821,7 +826,30 @@ function renderAll(){
 initMenus();
 setDefaultDates();
 autoFillProduct();
-renderAll();
+  function editSpray(index){
+  let s = db.sprays[index];
+
+  sprayDate.value = s.date;
+  sprayProduct.value = s.product;
+  sprayAI.value = s.ai;
+  sprayIRAC.value = s.irac;
+  sprayFRAC.value = s.frac;
+  sprayGroup.value = s.group;
+  sprayInterval.value = s.interval;
+  sprayNotes.value = s.notes;
+
+  db.sprays.splice(index,1);
+
+  saveDB();
+}
+
+function deleteSpray(index){
+  if(confirm("Delete this spray entry?")){
+    db.sprays.splice(index,1);
+    saveDB();
+  }
+}
+  renderAll();
   // CUSTOM PRODUCT SYSTEM
 db.customProducts ||= [];
 
