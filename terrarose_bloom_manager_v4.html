@@ -194,7 +194,7 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
 
         <label>Notes</label><textarea id="sprayNotes"></textarea>
         <button onclick="saveSpray()">Save Spray</button>
-        <button onclick="saveSpray()">Save Spray</button>
+        
 
 <h3>Add Custom Product</h3>
 
@@ -362,7 +362,8 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
 <script>
 const KEY = "terraroseBloomManagerV4";
 let db = JSON.parse(localStorage.getItem(KEY) || "{}");
-db.settings ||= { mode:"aggressive", thrips:"high", disease:"high", interval:7, rotationStyle:"strict" };
+  db.customProducts ||= [];
+  db.settings ||= { mode:"aggressive", thrips:"high", disease:"high", interval:7, rotationStyle:"strict" };
 db.sprays ||= [];
 db.fertilizer ||= [];
 db.soil ||= [];
@@ -399,7 +400,13 @@ function showTab(id, btn){
   btn.classList.add("active");
 }
 function initMenus(){
-  sprayProduct.innerHTML = Object.keys(productLibrary).map(p=>`<option>${p}</option>`).join("");
+  let builtIn = Object.keys(productLibrary);
+let custom = db.customProducts || [];
+let customNames = custom.map(p => p.name);
+
+let allProducts = [...builtIn, ...customNames];
+
+sprayProduct.innerHTML = allProducts.map(p => `<option>${p}</option>`).join("");
   settingMode.value = db.settings.mode;
   settingThrips.value = db.settings.thrips;
   settingDisease.value = db.settings.disease;
@@ -452,24 +459,32 @@ function weeklyWaterTotal(){
 }
 function getSortedSprays(){ return [...db.sprays].sort((a,b)=>(b.date||"").localeCompare(a.date||"")); }
 
-function saveSpray(){
+ function saveSpray(){
+  let selected = sprayProduct.value;
+
+  let item = productLibrary[selected];
+
+  if(!item){
+    let custom = db.customProducts.find(p => p.name === selected);
+    if(custom){
+      item = custom;
+    }
+  }
+
   db.sprays.unshift({
     date:sprayDate.value,
-    product:sprayProduct.value,
-    ai:sprayAI.value,
-    irac:sprayIRAC.value,
-    frac:sprayFRAC.value,
-    group:Number(sprayGroup.value),
+    product:selected,
+    ai:item?.ai || sprayAI.value,
+    irac:item?.irac || sprayIRAC.value,
+    frac:item?.frac || sprayFRAC.value,
+    group:Number(item?.group || sprayGroup.value),
     interval:Number(sprayInterval.value || db.settings.interval),
-    type:"",
-    organic:"",
-    budStage:"",
-    mix:"",
     notes:sprayNotes.value
   });
+
   saveDB();
 }
-function saveFertilizer(){
+  function saveFertilizer(){
   db.fertilizer.unshift({
     date:fertDate.value,
     product:fertProduct.value,
