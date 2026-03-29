@@ -194,6 +194,23 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
 
         <label>Notes</label><textarea id="sprayNotes"></textarea>
         <button onclick="saveSpray()">Save Spray</button>
+        <button onclick="saveSpray()">Save Spray</button>
+
+<h3>Add Custom Product</h3>
+
+<input id="customName" placeholder="Product Name">
+<input id="customAI" placeholder="Active Ingredient">
+<input id="customIRAC" placeholder="IRAC">
+<input id="customFRAC" placeholder="FRAC">
+
+<select id="customGroup">
+  <option value="1">🔴 Group 1 – Strong Knockdown</option>
+  <option value="2">🟢 Group 2 – Organic Reset</option>
+  <option value="3">🟠 Group 3 – Broad Cleanup</option>
+  <option value="4">🔵 Group 4 – Maintenance</option>
+</select>
+
+<button onclick="saveCustomProduct()">Save Custom Product</button>  
       </div>
 
       <div class="span-6 card">
@@ -790,6 +807,55 @@ initMenus();
 setDefaultDates();
 autoFillProduct();
 renderAll();
+  // CUSTOM PRODUCT SYSTEM
+db.customProducts ||= [];
+
+function saveCustomProduct(){
+  db.customProducts.push({
+    name:document.getElementById("customName").value,
+    ai:document.getElementById("customAI").value,
+    irac:document.getElementById("customIRAC").value,
+    frac:document.getElementById("customFRAC").value,
+    group:document.getElementById("customGroup").value
+  });
+  saveDB();
+  alert("Product saved!");
+}
+
+// EXTEND PRODUCT LIST
+const originalInitMenus = initMenus;
+initMenus = function(){
+  originalInitMenus();
+
+  let builtIn = Object.keys(productLibrary);
+  let custom = db.customProducts.map(p => p.name);
+  let all = [...builtIn, ...custom];
+
+  sprayProduct.innerHTML = all.map(p=>`<option>${p}</option>`).join("");
+};
+
+// EXTEND AUTOFILL
+const originalAutoFill = autoFillProduct;
+autoFillProduct = function(){
+  let item = productLibrary[sprayProduct.value];
+
+  if(item){
+    sprayAI.value = item.ai;
+    sprayIRAC.value = item.irac;
+    sprayFRAC.value = item.frac;
+    sprayGroup.value = item.group;
+  } else {
+    let custom = db.customProducts.find(p => p.name === sprayProduct.value);
+    if(custom){
+      sprayAI.value = custom.ai;
+      sprayIRAC.value = custom.irac;
+      sprayFRAC.value = custom.frac;
+      sprayGroup.value = custom.group;
+    }
+  }
+
+  sprayInterval.value = db.settings.interval;
+};
 </script>
 </body>
 </html>
