@@ -762,7 +762,14 @@ function renderWater(){
 }
 function renderBusiness(){
   salesList.innerHTML = db.sales.length
-    ? db.sales.slice(0,20).map(s => `<div class="alert green">${s.date} — ${s.item}: ${money(s.amount)}</div>`).join("")
+    ? db.sales.slice(0,20).map((s,i) => `
+    <div class="alert green">
+  ${s.date} — ${s.item}: ${money(s.amount)}
+  <br>
+  <button onclick="editSale(${i})">✏️</button>
+  <button onclick="deleteSale(${i})">🗑</button>
+</div>`)
+    .join("")
     : `<div class="alert yellow">No sales entered yet.</div>`;
 
   expenseList.innerHTML = db.expenses.length
