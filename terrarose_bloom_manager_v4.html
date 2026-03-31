@@ -407,6 +407,8 @@ let customNames = custom.map(p => p.name);
 let allProducts = [...builtIn, ...customNames];
 
 sprayProduct.innerHTML = allProducts.map(p => `<option>${p}</option>`).join("");
+  };  
+  initMenus();
   settingMode.value = db.settings.mode;
   settingThrips.value = db.settings.thrips;
   settingDisease.value = db.settings.disease;
@@ -447,7 +449,7 @@ function nextGroup(g){
   return n;
 }
 function groupLabel(g){
-  return {1:"🔴 Group 1 – Strong Knockdown",2:"🟢 Group 2 – Organic Reset",3:"🟠 Group 3 – Broad Cleanup",4:"🔵 Group 4 – Maintenance"}[g];
+  return {1:"🔴 Group 1 – Strong Knockdown",2:"🟢 Group 2 – Reset",3:"🟠 Group 3 – Broad Cleanup",4:"🔵 Group 4 – Maintenance"}[g];
 }
 function groupChip(g){ return `<span class="group-chip g${g}">Group ${g}</span>`; }
 function totalAmount(arr){ return arr.reduce((s,x)=>s + Number(x.amount || 0), 0); }
@@ -856,9 +858,12 @@ function deleteSpray(index){
     saveDB();
   }
 }
-  renderAll();
-  // CUSTOM PRODUCT SYSTEM
 db.customProducts ||= [];
+  renderAll();
+  setTimeout(initMenus, 0);
+  
+  // CUSTOM PRODUCT SYSTEM
+
 
 function saveCustomProduct(){
   db.customProducts.push({
