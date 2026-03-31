@@ -859,8 +859,9 @@ function deleteSpray(index){
   }
 }
 db.customProducts ||= [];
+  initMenus();
   renderAll();
-  setTimeout(initMenus, 0);
+  
   
   // CUSTOM PRODUCT SYSTEM
 
