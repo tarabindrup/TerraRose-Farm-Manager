@@ -912,6 +912,8 @@ autoFillProduct = function(){
 
   sprayInterval.value = db.settings.interval;
 };
+  db.customProducts ||= [];
+  renderAll();
 </script>
 </body>
 </html>
