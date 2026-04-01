@@ -905,23 +905,28 @@ db.customProducts ||= [];
   
   
 document.addEventListener("DOMContentLoaded", function () {
+
   initMenus();
   setDefaultDates();
   autoFillProduct();
   renderAll();
 
+  // FORCE tab clicks to work
   document.querySelectorAll(".tab").forEach(tab => {
-  tab.onclick = function(){
-    const id = this.getAttribute("data-tab");
+    tab.onclick = function(){
+      const id = this.getAttribute("data-tab");
 
-    document.querySelectorAll(".view").forEach(v => v.style.display = "none");
+      // hide all views
+      document.querySelectorAll(".view").forEach(v => v.style.display = "none");
 
-    const view = document.getElementById(id);
-    if(view){
-      view.style.display = "block";
-    }
-  };
-});
+      // show selected
+      const view = document.getElementById(id);
+      if(view){
+        view.style.display = "block";
+      }
+    };
+  });
+
 
 </script>
 </body>
