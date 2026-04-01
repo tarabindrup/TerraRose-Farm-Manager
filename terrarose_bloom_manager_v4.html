@@ -911,11 +911,18 @@ document.addEventListener("DOMContentLoaded", function () {
   renderAll();
 
   document.querySelectorAll(".tab").forEach(tab => {
-    tab.addEventListener("click", function () {
-      showTab(this.dataset.tab);
-    });
-  });
+  tab.onclick = function(){
+    const id = this.getAttribute("data-tab");
+
+    document.querySelectorAll(".view").forEach(v => v.style.display = "none");
+
+    const view = document.getElementById(id);
+    if(view){
+      view.style.display = "block";
+    }
+  };
 });
+
 </script>
 </body>
 </html>
