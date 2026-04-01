@@ -383,7 +383,7 @@ const productLibrary = {
   "Copper": { ai:"Copper", irac:"", frac:"M1", group:"1" },
   "Bacillus subtilis": { ai:"Bacillus subtilis", irac:"", frac:"BM02", group:"4" }
 };
-const sprayProduct = document.getElementById("sprayProduct");
+
   function saveDB(){ localStorage.setItem(KEY, JSON.stringify(db)); renderAll(); }
 function todayStr(){ return new Date().toISOString().slice(0,10); }
 function setDefaultDates(){
@@ -400,22 +400,24 @@ function showTab(id, btn){
   btn.classList.add("active");
 }
 function initMenus(){
+  const sprayProduct = document.getElementById("sprayProduct");
+
   let builtIn = Object.keys(productLibrary);
-let custom = db.customProducts || [];
-let customNames = custom.map(p => p.name);
+  let custom = db.customProducts.map(p => p.name);
+  let allProducts = [...builtIn, ...custom];
 
-let allProducts = [...builtIn, ...customNames];
+  sprayProduct.innerHTML = allProducts
+    .map(p => `<option>${p}</option>`)
+    .join("");
 
-sprayProduct.innerHTML = allProducts.map(p => `<option>${p}</option>`).join("");
-  };  
-  initMenus();
-  settingMode.value = db.settings.mode;
-  settingThrips.value = db.settings.thrips;
-  settingDisease.value = db.settings.disease;
-  settingInterval.value = db.settings.interval;
-  settingRotationStyle.value = db.settings.rotationStyle;
+  // Load saved settings
+  document.getElementById("settingMode").value = db.settings.mode;
+  document.getElementById("settingThrips").value = db.settings.thrips;
+  document.getElementById("settingDisease").value = db.settings.disease;
+  document.getElementById("settingInterval").value = db.settings.interval;
+  document.getElementById("settingRotationStyle").value = db.settings.rotationStyle;
 }
-function autoFillProduct(){
+  function autoFillProduct(){
   const item = productLibrary[sprayProduct.value];
   if(!item) return;
   sprayAI.value = item.ai;
@@ -832,9 +834,7 @@ function renderAll(){
   renderBusiness();
   renderTax();
 }
-initMenus();
-setDefaultDates();
-autoFillProduct();
+
   function editSpray(index){
   let s = db.sprays[index];
 
@@ -860,10 +860,39 @@ function deleteSpray(index){
 }
 db.customProducts ||= [];
   
+  
+  
+  
+document.addEventListener("DOMContentLoaded", function () {
+
+  // Run setup AFTER page loads
+  initMenus();
+  setDefaultDates();
+  autoFillProduct();
   renderAll();
-  
-  
-  
+
+  // Tab click system
+  document.querySelectorAll(".tab").forEach(tab => {
+    tab.addEventListener("click", function () {
+
+      const text = this.textContent.trim();
+
+      let tabId = "";
+
+      if (text === "Dashboard") tabId = "dashboard";
+      if (text === "Planner") tabId = "planner";
+      if (text === "Spray Log") tabId = "spray";
+      if (text === "Fertilizer") tabId = "fert";
+      if (text === "Soil") tabId = "soil";
+      if (text === "Irrigation") tabId = "irrigation";
+      if (text === "Business") tabId = "business";
+      if (text === "Tax & Reports") tabId = "tax";
+
+      showTab(tabId, this);
+    });
+  });
+
+});
 </script>
 </body>
 </html>
