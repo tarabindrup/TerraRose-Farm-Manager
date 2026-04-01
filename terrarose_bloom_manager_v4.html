@@ -394,14 +394,24 @@ function setDefaultDates(){
 }
 function money(v){ return "$" + Number(v || 0).toFixed(2); }
 function showTab(id){
+  // Hide all views
   document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+
+  // Remove active from all tabs
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
 
+  // Show selected view
   const targetView = document.getElementById(id);
   if (targetView) {
     targetView.classList.add("active");
   }
 
+  // Highlight active tab
+  const activeTab = document.querySelector(`.tab[data-tab="${id}"]`);
+  if (activeTab) {
+    activeTab.classList.add("active");
+  }
+}
   const activeTab = document.querySelector(`.tab[data-tab="${id}"]`);
   if (activeTab) {
     activeTab.classList.add("active");
