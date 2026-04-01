@@ -861,7 +861,25 @@ function renderAll(){
   renderBusiness();
   renderTax();
 }
+function showTab(id){
+  // Hide all views
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
 
+  // Remove active from all tabs
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+
+  // Show selected view
+  const view = document.getElementById(id);
+  if(view){
+    view.classList.add("active");
+  }
+
+  // Highlight active tab
+  const tab = document.querySelector(`.tab[data-tab="${id}"]`);
+  if(tab){
+    tab.classList.add("active");
+  }
+}
   function editSpray(index){
   let s = db.sprays[index];
 
