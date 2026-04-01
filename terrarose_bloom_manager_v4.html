@@ -73,16 +73,7 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
 </header>
 
 <div class="container">
-  <div class="tabs">
-    <button class="tab active" onclick="showTab('dashboard',this)">Dashboard</button>
-    <button class="tab" onclick="showTab('planner',this)">Planner</button>
-    <button class="tab" onclick="showTab('spray',this)">Spray Log</button>
-    <button class="tab" onclick="showTab('fert',this)">Fertilizer</button>
-    <button class="tab" onclick="showTab('soil',this)">Soil</button>
-    <button class="tab" onclick="showTab('irrigation',this)">Irrigation</button>
-    <button class="tab" onclick="showTab('business',this)">Business</button>
-    <button class="tab" onclick="showTab('tax',this)">Tax & Reports</button>
-  </div>
+  
 
   <div id="dashboard" class="view active">
     <div class="kpis">
@@ -91,7 +82,16 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
       <div class="kpi"><div class="label">Labor</div><div class="value labor-color" id="kpiLabor">$0.00</div></div>
       <div class="kpi"><div class="label">Net Profit</div><div class="value profit-color" id="kpiProfit">$0.00</div></div>
     </div>
-
+<div class="tabs">
+  <button class="tab active" data-tab="dashboard">Dashboard</button>
+  <button class="tab" data-tab="planner">Planner</button>
+  <button class="tab" data-tab="spray">Spray Log</button>
+  <button class="tab" data-tab="fert">Fertilizer</button>
+  <button class="tab" data-tab="soil">Soil</button>
+  <button class="tab" data-tab="irrigation">Irrigation</button>
+  <button class="tab" data-tab="business">Business</button>
+  <button class="tab" data-tab="tax">Tax & Reports</button>
+</div> 
     <div class="grid" style="margin-top:14px">
       <div class="span-6 card">
         <h3>Command Center</h3>
@@ -393,13 +393,21 @@ function setDefaultDates(){
   });
 }
 function money(v){ return "$" + Number(v || 0).toFixed(2); }
-function showTab(id, btn){
+function showTab(id){
   document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  btn.classList.add("active");
+
+  const targetView = document.getElementById(id);
+  if (targetView) {
+    targetView.classList.add("active");
+  }
+
+  const activeTab = document.querySelector(`.tab[data-tab="${id}"]`);
+  if (activeTab) {
+    activeTab.classList.add("active");
+  }
 }
-function initMenus(){
+  function initMenus(){
   const sprayProduct = document.getElementById("sprayProduct");
 
   let builtIn = Object.keys(productLibrary);
@@ -418,15 +426,24 @@ function initMenus(){
   document.getElementById("settingRotationStyle").value = db.settings.rotationStyle;
 }
   function autoFillProduct(){
-  const item = productLibrary[sprayProduct.value];
+  const sprayProduct = document.getElementById("sprayProduct");
+  const selected = sprayProduct.value;
+
+  let item = productLibrary[selected];
+
+  if(!item){
+    item = db.customProducts.find(p => p.name === selected);
+  }
+
   if(!item) return;
-  sprayAI.value = item.ai;
-  sprayIRAC.value = item.irac;
-  sprayFRAC.value = item.frac;
-  sprayGroup.value = item.group;
+
+  sprayAI.value = item.ai || "";
+  sprayIRAC.value = item.irac || "";
+  sprayFRAC.value = item.frac || "";
+  sprayGroup.value = item.group || "1";
   sprayInterval.value = db.settings.interval;
 }
-function saveSettings(){
+  function saveSettings(){
   db.settings.mode = settingMode.value;
   db.settings.thrips = settingThrips.value;
   db.settings.disease = settingDisease.value;
@@ -864,34 +881,16 @@ db.customProducts ||= [];
   
   
 document.addEventListener("DOMContentLoaded", function () {
-
-  // Run setup AFTER page loads
   initMenus();
   setDefaultDates();
   autoFillProduct();
   renderAll();
 
-  // Tab click system
   document.querySelectorAll(".tab").forEach(tab => {
     tab.addEventListener("click", function () {
-
-      const text = this.textContent.trim();
-
-      let tabId = "";
-
-      if (text === "Dashboard") tabId = "dashboard";
-      if (text === "Planner") tabId = "planner";
-      if (text === "Spray Log") tabId = "spray";
-      if (text === "Fertilizer") tabId = "fert";
-      if (text === "Soil") tabId = "soil";
-      if (text === "Irrigation") tabId = "irrigation";
-      if (text === "Business") tabId = "business";
-      if (text === "Tax & Reports") tabId = "tax";
-
-      showTab(tabId, this);
+      showTab(this.dataset.tab);
     });
   });
-
 });
 </script>
 </body>
