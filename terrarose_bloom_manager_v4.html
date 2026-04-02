@@ -84,7 +84,7 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
     </div>
 <div class="tabs">
   <button class="tab active" data-tab="dashboard">Dashboard</button>
-  <button onclick="alert('clicked')" style="border: 3px solid red; padding: 10px;">Planner</button>
+  <button class="tab" data-tab="planner">Planner</button>
   <button class="tab" data-tab="spray">Spray Log</button>
   <button class="tab" data-tab="fert">Fertilizer</button>
   <button class="tab" data-tab="soil">Soil</button>
@@ -911,23 +911,13 @@ document.addEventListener("DOMContentLoaded", function () {
   autoFillProduct();
   renderAll();
 
-  // FORCE tab clicks to work
-  document.querySelectorAll(".tab").forEach(tab => {
-    tab.onclick = function(){
-      const id = this.getAttribute("data-tab");
+  
 
-      // hide all views
-      document.querySelectorAll(".view").forEach(v => v.style.display = "none");
-
-      // show selected
-      const view = document.getElementById(id);
-      if(view){
-        view.style.display = "block";
-      }
-    };
-  });
-
-
-</script>
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.onclick = function(){
+    showTab(this.getAttribute("data-tab"));
+  };
+});
+  </script>
 </body>
 </html>
