@@ -83,15 +83,16 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut
       <div class="kpi"><div class="label">Net Profit</div><div class="value profit-color" id="kpiProfit">$0.00</div></div>
     </div>
 <div class="tabs">
-  <button class="tab active" data-tab="dashboard">Dashboard</button>
-  <button class="tab" data-tab="planner">Planner</button>
-  <button class="tab" data-tab="spray">Spray Log</button>
-  <button class="tab" data-tab="fert">Fertilizer</button>
-  <button class="tab" data-tab="soil">Soil</button>
-  <button class="tab" data-tab="irrigation">Irrigation</button>
-  <button class="tab" data-tab="business">Business</button>
-  <button class="tab" data-tab="tax">Tax & Reports</button>
-</div> 
+  <button class="tab active" onclick="showTab('dashboard')">Dashboard</button>
+  <button class="tab" onclick="showTab('planner')">Planner</button>
+  <button class="tab" onclick="showTab('spray')">Spray Log</button>
+  <button class="tab" onclick="showTab('fert')">Fertilizer</button>
+  <button class="tab" onclick="showTab('soil')">Soil</button>
+  <button class="tab" onclick="showTab('irrigation')">Irrigation</button>
+  <button class="tab" onclick="showTab('business')">Business</button>
+  <button class="tab" onclick="showTab('tax')">Tax & Reports</button>
+</div>
+  
     <div class="grid" style="margin-top:14px">
       <div class="span-6 card">
         <h3>Command Center</h3>
